@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+
+# Dev
+client/.next
+client/build-info
+
+# Production
+client/build
+
+# Contract's artifacts
+client/artifacts
+
+# Cache
+hardhat/cache
+
+# Environment variables
+.env
+
+# Misc
+.DS_Store
