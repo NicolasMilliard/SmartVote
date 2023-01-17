@@ -14,22 +14,16 @@ import "./VotingHandler.sol";
 contract VotingFactory {
     address immutable votingHandlerImplementation;
 
-    mapping(bytes32 => address) public deployedInstances;
-
-    event NewInstance(address indexed _from, address indexed _contract, bytes32 indexed _votingId);
+    event NewInstance(address indexed _from, address indexed _contract);
 
     constructor() {
         votingHandlerImplementation = address(new VotingHandler());
     }
 
     function b_A6Q() external {
-        bytes32 votingId = keccak256(abi.encodePacked(msg.sender, address(this), block.timestamp));
-        
-        require(deployedInstances[votingId] == address(0), "Instance already exists");
-
-        address clone = Clones.cloneDeterministic(votingHandlerImplementation, votingId);
+        address clone = Clones.clone(votingHandlerImplementation);
         VotingHandler(clone).initialize(msg.sender);
 
-        emit NewInstance(msg.sender, clone, votingId);
+        emit NewInstance(msg.sender, clone);
     }
 }
