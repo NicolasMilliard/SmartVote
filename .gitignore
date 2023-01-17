@@ -5,6 +5,9 @@ node_modules
 client/.next
 client/build-info
 
+# Coverage
+hardhat/coverage
+
 # Production
 client/build
 
