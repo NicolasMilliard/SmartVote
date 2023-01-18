@@ -70,6 +70,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @dev Only the owner of the contract can call this function when the contract is not paused.
     /// @param _votingSessionName is the new name of this instance
     function renameInstance(string calldata _votingSessionName) external onlyOwner whenNotPaused {
+        require(keccak256(abi.encode(_votingSessionName)) != keccak256(abi.encode(votingSessionName)) , "0x02");
         votingSessionName = _votingSessionName;
 
         emit InstanceRenamed(address(this));
@@ -80,9 +81,18 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @dev Reset hasVoted and votedProposalId in the mapping, delete votersAddress array and call resetProposals function.
     /// @dev Reset votingStatus to register voters.
     function resetSession() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.VotesTallied, "0x02");
+        require(votingStatus == WorkflowStatus.VotesTallied, "0x03");
+        winningProposalId = 0;
 
-        resetProposals();
+        uint votersAddressLength = votersAddress.length;
+        for(uint i; i < votersAddressLength;) {
+            delete voters[votersAddress[i]].isRegistered;
+            delete voters[votersAddress[i]].hasVoted;
+            voters[votersAddress[i]].votedProposalId = 0;
+
+            // Safely optimize gas cost (i can't be overflow)
+            unchecked { i++; }
+        }
 
         delete votersAddress;
         
@@ -94,12 +104,12 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @dev Winning proposal is reset and both allProposals and equalProposals arrays are delete (equalProposals represent proposals in case of an equality).
     /// @dev Reset votingStatus with startProposalsRegistration() to register proposals.
     function resetProposals() public onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.VotesTallied, "0x03");
+        require(votingStatus == WorkflowStatus.VotesTallied, "0x04");
         winningProposalId = 0;
 
         uint votersAddressLength = votersAddress.length;
         for(uint i; i < votersAddressLength;) {
-            voters[votersAddress[i]].hasVoted = false;
+            delete voters[votersAddress[i]].hasVoted;
             voters[votersAddress[i]].votedProposalId = 0;
 
             // Safely optimize gas cost (i can't be overflow)
@@ -117,8 +127,8 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @dev Set isRegistered for the address to true and store this address in votersAddress array.
     /// @param _address is the address of the Voter who is added by the owner.
     function authorized(address _address) public onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.RegisteringVoters, "0x04");
-        require(!voters[_address].isRegistered, "0x05");
+        require(votingStatus == WorkflowStatus.RegisteringVoters, "0x05");
+        require(!voters[_address].isRegistered, "0x06");
 
         voters[_address].isRegistered = true;
 
@@ -132,7 +142,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @dev Call authorized() for each value of the array.
     /// @param _addresses is the array of all addresses of voters who are added by the owner.
     function batchAuthorized(address[] calldata _addresses) external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.RegisteringVoters, "0x04");
+        require(votingStatus == WorkflowStatus.RegisteringVoters, "0x05");
 
         uint length = _addresses.length;
         for(uint i; i < length;) {
@@ -146,7 +156,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @dev Only the owner of the contract can call this function when the contract is not paused.
     /// @param _votersCanAddProposals is used to determine if Voters can add Proposals.
     function authorizedVotersToAddProposals(bool _votersCanAddProposals) external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.RegisteringVoters, "0x06");
+        require(votingStatus == WorkflowStatus.RegisteringVoters, "0x07");
 
         votersCanAddProposals = _votersCanAddProposals;
 
@@ -156,7 +166,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @notice Administrator starts proposals registration session.
     /// @dev Only the owner of the contract can call this function when the contract is not paused.
     function startProposalsRegistration() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.RegisteringVoters, "0x07");
+        require(votingStatus == WorkflowStatus.RegisteringVoters, "0x08");
         updateWorkflow(WorkflowStatus.ProposalsRegistrationStarted);
     }
 
@@ -166,11 +176,11 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @dev allProposals array is incremented at each new proposal so allProposals.length - 1 is equal to the index of the right proposal.
     /// @param _description is necessary to check if the proposal has already been register.
     function registerProposals(string calldata _description) external checkVoter whenNotPaused {
-        require(votingStatus == WorkflowStatus.ProposalsRegistrationStarted, "0x08");
+        require(votingStatus == WorkflowStatus.ProposalsRegistrationStarted, "0x09");
 
         // Si msg.sender n'est pas le owner, on check le votersCanAddProposals
         if(msg.sender != owner()) {
-            require(votersCanAddProposals == true, "0x09");
+            require(votersCanAddProposals == true, "0x10");
         }
 
         Proposal memory proposal;
@@ -186,7 +196,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @notice Administrator ends proposals registration session.
     /// @dev Only the owner of the contract can call this function when the contract is not paused.
     function endProposalsRegistration() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.ProposalsRegistrationStarted, "0x10");
+        require(votingStatus == WorkflowStatus.ProposalsRegistrationStarted, "0x11");
         updateWorkflow(WorkflowStatus.ProposalsRegistrationEnded);
     }
 
@@ -200,7 +210,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @notice Administrator starts voting session.
     /// @dev Only the owner of the contract can call this function when the contract is not paused.
     function startVotingSession() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.ProposalsRegistrationEnded, "0x11");
+        require(votingStatus == WorkflowStatus.ProposalsRegistrationEnded, "0x12");
         updateWorkflow(WorkflowStatus.VotingSessionStarted);
     }
 
@@ -209,8 +219,8 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @dev voteCount of the _proposalId is increments by one.
     /// @param _proposalId is the id of the proposal selected by the Voter.
     function vote(uint _proposalId) external checkVoter whenNotPaused {
-        require(votingStatus == WorkflowStatus.VotingSessionStarted, "0x12");
-        require(!voters[msg.sender].hasVoted, "0x13");
+        require(votingStatus == WorkflowStatus.VotingSessionStarted, "0x13");
+        require(!voters[msg.sender].hasVoted, "0x14");
 
         voters[msg.sender].hasVoted = true;
         voters[msg.sender].votedProposalId = _proposalId;
@@ -224,14 +234,14 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @notice Administrator ends voting session.
     /// @dev Only the owner of the contract can call this function when the contract is not paused.
     function endVotingSession() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.VotingSessionStarted, "0x12");
+        require(votingStatus == WorkflowStatus.VotingSessionStarted, "0x13");
         updateWorkflow(WorkflowStatus.VotingSessionEnded);
     }
 
     /// @notice Administrator starts tally session.
     /// @dev Only the owner of the contract can call this function when the contract is not paused.
     function startTallySession() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.VotingSessionEnded, "0x14");
+        require(votingStatus == WorkflowStatus.VotingSessionEnded, "0x15");
         updateWorkflow(WorkflowStatus.VotesTallied);
     }
 
@@ -240,7 +250,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @dev Call getHighestVoteCount function. Compare all voteCount of each proposals and store proposals with an equal voteCount in a new array (equalProposals).
     /// @dev If there is no equality, winningProposalId is set.
     function tallyVotes() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.VotesTallied, "0x15");
+        require(votingStatus == WorkflowStatus.VotesTallied, "0x16");
         
         uint highestNumber = getHighestVoteCount();
 
@@ -290,7 +300,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @param _address is the address of a Voter to get his vote.
     /// @return votedProposalId
     function getSpecificVote(address _address) external checkVoter whenNotPaused view returns(uint) {
-        require(voters[_address].hasVoted == true, "0x16");
+        require(voters[_address].hasVoted == true, "0x17");
 
         return voters[_address].votedProposalId;
     }
@@ -298,7 +308,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @notice Everyone can check the winner's proposal details.
     /// @return winning proposal's description.
     function getWinner() external whenNotPaused view returns(string memory) {
-        require(votingStatus == WorkflowStatus.VotesTallied, "0x17");
+        require(votingStatus == WorkflowStatus.VotesTallied, "0x18");
         return allProposals[winningProposalId].description;
     }
 
@@ -317,7 +327,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
         uint allProposalsLength = allProposals.length; 
         for(uint i; i < allProposalsLength;) {
             if(keccak256(abi.encode(_description)) == keccak256(abi.encode(allProposals[i].description))) {
-                revert("0x18");
+                revert("0x19");
             }
             // Safely optimize gas cost (i can't be overflow)
             unchecked { i++; }
