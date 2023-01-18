@@ -3,11 +3,10 @@ const hre = require("hardhat");
 
 describe("VotingFactory", async () => {
   // Variables used through all tests
-  const zeroAddress = hre.ethers.constants.AddressZero;
   let votingFactory;
   let account;
 
-  // Deploy contract and get signers
+  // Deploy contract and get signer
   beforeEach(async () => {
     const VotingFactory = await hre.ethers.getContractFactory("VotingFactory");
     votingFactory = await VotingFactory.deploy();
@@ -17,7 +16,7 @@ describe("VotingFactory", async () => {
 
   describe("b_A6Q (create a new clone)", async () => {
     it("should emit an event", async () => {
-      await expect(votingFactory.b_A6Q({ from: account.address })).to.emit(
+      await expect(votingFactory.connect(account).b_A6Q()).to.emit(
         votingFactory,
         "NewInstance"
       );
@@ -28,7 +27,7 @@ describe("VotingFactory", async () => {
       const txReceipt = await tx.wait();
       const from = txReceipt.events[2].args[0];
 
-      await expect(from).to.equal(account.address);
+      expect(from).to.be.equal(account.address);
     });
   });
 });
