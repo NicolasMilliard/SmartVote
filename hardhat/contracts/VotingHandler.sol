@@ -60,7 +60,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
 
     /// @notice Remove the current voting session (pause it definitively).
     /// @dev Only the owner of the contract can call this function when the contract is not paused.
-    function removedInstance() external onlyOwner whenNotPaused {
+    function removeInstance() external onlyOwner whenNotPaused {
         _pause();
 
         emit InstanceRemoved(address(this));
@@ -76,57 +76,11 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
         emit InstanceRenamed(address(this));
     }
 
-    /// @notice Reset voters and proposals.
-    /// @dev Only the owner of the contract can call this function when the contract is not paused.
-    /// @dev Reset hasVoted and votedProposalId in the mapping, delete votersAddress array and call resetProposals function.
-    /// @dev Reset votingStatus to register voters.
-    function resetSession() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.VotesTallied, "0x03");
-        winningProposalId = 0;
-
-        uint votersAddressLength = votersAddress.length;
-        for(uint i; i < votersAddressLength;) {
-            delete voters[votersAddress[i]].isRegistered;
-            delete voters[votersAddress[i]].hasVoted;
-            voters[votersAddress[i]].votedProposalId = 0;
-
-            // Safely optimize gas cost (i can't be overflow)
-            unchecked { i++; }
-        }
-
-        delete votersAddress;
-        
-        updateWorkflow(WorkflowStatus.RegisteringVoters);
-    }
-
-    /// @notice Reset only proposals. Function is external because admin can reset only proposals if needed.
-    /// @dev Only the owner of the contract can call this function when the contract is not paused.
-    /// @dev Winning proposal is reset and both allProposals and equalProposals arrays are delete (equalProposals represent proposals in case of an equality).
-    /// @dev Reset votingStatus with startProposalsRegistration() to register proposals.
-    function resetProposals() public onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.VotesTallied, "0x04");
-        winningProposalId = 0;
-
-        uint votersAddressLength = votersAddress.length;
-        for(uint i; i < votersAddressLength;) {
-            delete voters[votersAddress[i]].hasVoted;
-            voters[votersAddress[i]].votedProposalId = 0;
-
-            // Safely optimize gas cost (i can't be overflow)
-            unchecked { i++; }
-        }
-        
-        delete allProposals;
-        delete equalProposals;
-
-        updateWorkflow(WorkflowStatus.ProposalsRegistrationStarted);
-    }
-
     /// @notice Administrator add a voter to the whitelist. A voter can only be authorized once.
     /// @dev Only the owner of the contract can call this function when the contract is not paused.
     /// @dev Set isRegistered for the address to true and store this address in votersAddress array.
     /// @param _address is the address of the Voter who is added by the owner.
-    function authorized(address _address) public onlyOwner whenNotPaused {
+    function authorize(address _address) public onlyOwner whenNotPaused {
         require(votingStatus == WorkflowStatus.RegisteringVoters, "0x05");
         require(!voters[_address].isRegistered, "0x06");
 
@@ -139,14 +93,14 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
 
     /// @notice Administrator add multiple voters to the whitelist. A voter can only be authorized once.
     /// @dev Only the owner of the contract can call this function when the contract is not paused.
-    /// @dev Call authorized() for each value of the array.
+    /// @dev Call authorize() for each value of the array.
     /// @param _addresses is the array of all addresses of voters who are added by the owner.
-    function batchAuthorized(address[] calldata _addresses) external onlyOwner whenNotPaused {
+    function batchAuthorize(address[] calldata _addresses) external onlyOwner whenNotPaused {
         require(votingStatus == WorkflowStatus.RegisteringVoters, "0x05");
 
         uint length = _addresses.length;
         for(uint i; i < length;) {
-            authorized(_addresses[i]);
+            authorize(_addresses[i]);
             // Safely optimize gas cost (i can't be overflow)
             unchecked { i++; }
         }
@@ -155,7 +109,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     /// @notice By default, only Administrator can add proposals. This function allow Voters to add Proposals.
     /// @dev Only the owner of the contract can call this function when the contract is not paused.
     /// @param _votersCanAddProposals is used to determine if Voters can add Proposals.
-    function authorizedVotersToAddProposals(bool _votersCanAddProposals) external onlyOwner whenNotPaused {
+    function authorizeVotersToAddProposals(bool _votersCanAddProposals) external onlyOwner whenNotPaused {
         require(votingStatus == WorkflowStatus.RegisteringVoters, "0x07");
 
         votersCanAddProposals = _votersCanAddProposals;
@@ -172,10 +126,10 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
 
     /// @notice Voters can register their proposal.
     /// @dev Only voters can call this function.
-    /// @dev checkProposals is called to check if this proposals wasn't already be added to allProposals array.
+    /// @dev checkProposal is called to check if this proposal wasn't already be added to allProposals array.
     /// @dev allProposals array is incremented at each new proposal so allProposals.length - 1 is equal to the index of the right proposal.
     /// @param _description is necessary to check if the proposal has already been register.
-    function registerProposals(string calldata _description) external checkVoter whenNotPaused {
+    function registerProposal(string calldata _description) external checkVoter whenNotPaused {
         require(votingStatus == WorkflowStatus.ProposalsRegistrationStarted, "0x09");
 
         // Si msg.sender n'est pas le owner, on check le votersCanAddProposals
@@ -186,7 +140,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
         Proposal memory proposal;
         proposal.description = _description;
 
-        checkProposals(proposal.description);
+        checkProposal(proposal.description);
 
         allProposals.push(proposal);
         
@@ -321,9 +275,9 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
         emit WorkflowStatusChange(previousStatus, votingStatus);
     }
 
-    /// @dev Called by registerProposals. Revert if keccak256 of two descriptions are equal.
+    /// @dev Called by registerProposal. Revert if keccak256 of two descriptions are equal.
     /// @param _description is the description of a new proposal suggested by a Voter.
-    function checkProposals(string memory _description) private whenNotPaused view {
+    function checkProposal(string memory _description) private whenNotPaused view {
         uint allProposalsLength = allProposals.length; 
         for(uint i; i < allProposalsLength;) {
             if(keccak256(abi.encode(_description)) == keccak256(abi.encode(allProposals[i].description))) {
