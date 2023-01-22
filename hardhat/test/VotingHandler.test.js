@@ -23,9 +23,16 @@ describe("VotingHandler", async () => {
   });
 
   describe("Test initialize", async () => {
-    it("should set owner address (POV owner)", async () => {
-      const tx = await votingHandler.owner();
-      expect(tx).to.be.equal(owner.address);
+    it("should set owner address during initialize (POV owner)", async () => {
+      expect(await votingHandler.connect(owner).owner()).to.be.equal(
+        owner.address
+      );
+    });
+
+    it("should revert: try to init a second time (POV owner)", async () => {
+      await expect(
+        votingHandler.connect(owner).initialize(owner.address)
+      ).to.be.revertedWith("Initializable: contract is already initialized");
     });
   });
 
@@ -37,9 +44,9 @@ describe("VotingHandler", async () => {
     });
 
     it("should revert (POV voter1)", async () => {
-      const tx = votingHandler.connect(voter1).removeInstance();
-
-      await expect(tx).to.be.revertedWith("Ownable: caller is not the owner");
+      await expect(
+        votingHandler.connect(voter1).removeInstance()
+      ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
     it("should revert: already paused (POV owner)", async () => {
@@ -277,13 +284,13 @@ describe("VotingHandler", async () => {
       await votingHandler.connect(owner).authorizeVotersToAddProposals(true);
       // Update workflow status
       await votingHandler.connect(owner).startProposalsRegistration();
-      // Owner add a proposal
-      await expect(votingHandler.connect(owner).registerProposal(description))
+      // Voter1 add a proposal
+      await expect(votingHandler.connect(voter1).registerProposal(description))
         .to.emit(votingHandler, "ProposalRegistered")
         .withArgs(0);
     });
 
-    it("should revert (POV nonVoter)", async () => {
+    it("should revert: caller is not a voter (POV nonVoter)", async () => {
       const description = "Proposal description";
       await expect(
         votingHandler.connect(nonVoter).registerProposal(description)
@@ -304,6 +311,26 @@ describe("VotingHandler", async () => {
       await expect(
         votingHandler.connect(owner).registerProposal(description)
       ).to.be.revertedWith("0x09");
+    });
+
+    it("should revert: voters can't add proposals (POV voter1)", async () => {
+      const description = "Proposal description";
+      // Update workflow status
+      await votingHandler.connect(owner).startProposalsRegistration();
+      await expect(
+        votingHandler.connect(voter1).registerProposal(description)
+      ).to.be.revertedWith("0x10");
+    });
+
+    it("should revert: proposal already submitted (POV owner)", async () => {
+      const description = "Proposal description";
+      // Update workflow status
+      await votingHandler.connect(owner).startProposalsRegistration();
+      votingHandler.connect(owner).registerProposal(description);
+      // Add same proposal a second time
+      await expect(
+        votingHandler.connect(owner).registerProposal(description)
+      ).to.be.revertedWith("0x19");
     });
   });
 
@@ -372,7 +399,7 @@ describe("VotingHandler", async () => {
       }
     });
 
-    it("should revert (POV nonVoter)", async () => {
+    it("should revert: caller is not a voter (POV nonVoter)", async () => {
       await expect(
         votingHandler.connect(nonVoter).displayProposals()
       ).to.be.revertedWith("0x01");
@@ -444,11 +471,12 @@ describe("VotingHandler", async () => {
         .withArgs(voter1.address, 0);
     });
 
-    it("should revert (POV nonVoter)", async () => {
+    it("should revert: caller is not a voter (POV nonVoter)", async () => {
       // Update workflow status
       await votingHandler.connect(owner).startVotingSession();
-      const tx = votingHandler.connect(nonVoter).vote(0);
-      await expect(tx).to.be.revertedWith("0x01");
+      await expect(votingHandler.connect(nonVoter).vote(0)).to.be.revertedWith(
+        "0x01"
+      );
     });
 
     it("should revert: already paused (POV owner)", async () => {
@@ -456,6 +484,294 @@ describe("VotingHandler", async () => {
       await votingHandler.connect(owner).removeInstance();
       await expect(votingHandler.connect(voter1).vote(0)).to.be.revertedWith(
         "Pausable: paused"
+      );
+    });
+
+    it("should revert: workflow status is not VotingSessionStarted (POV owner)", async () => {
+      await expect(votingHandler.connect(voter1).vote(0)).to.be.revertedWith(
+        "0x13"
+      );
+    });
+
+    it("should revert: voter has already voted once (POV voter1)", async () => {
+      // Update workflow status
+      await votingHandler.connect(owner).startVotingSession();
+      await votingHandler.connect(voter1).vote(0);
+      await expect(votingHandler.connect(voter1).vote(0)).to.be.revertedWith(
+        "0x14"
+      );
+    });
+  });
+
+  describe("End voting session", async () => {
+    beforeEach(async () => {
+      // Update workflow status
+      await votingHandler.connect(owner).startProposalsRegistration();
+      await votingHandler.connect(owner).endProposalsRegistration();
+      await votingHandler.connect(owner).startVotingSession();
+    });
+
+    it("should update workflow to VotingSessionEnded", async () => {
+      await expect(votingHandler.connect(owner).endVotingSession())
+        .to.emit(votingHandler, "WorkflowStatusChange")
+        .withArgs(3, 4);
+    });
+
+    it("should revert (POV voter1)", async () => {
+      await expect(
+        votingHandler.connect(voter1).endVotingSession()
+      ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+
+    it("should revert: instance is paused (POV owner)", async () => {
+      // Pause the instance
+      await votingHandler.connect(owner).removeInstance();
+      await expect(
+        votingHandler.connect(owner).endVotingSession()
+      ).to.be.revertedWith("Pausable: paused");
+    });
+
+    it("should revert: workflow status is already VotingSessionEnded (POV owner)", async () => {
+      await votingHandler.connect(owner).endVotingSession();
+      await expect(
+        votingHandler.connect(owner).endVotingSession()
+      ).to.be.revertedWith("0x13");
+    });
+  });
+
+  describe("Start tally session", async () => {
+    beforeEach(async () => {
+      // Update workflow status
+      await votingHandler.connect(owner).startProposalsRegistration();
+      await votingHandler.connect(owner).endProposalsRegistration();
+      await votingHandler.connect(owner).startVotingSession();
+      await votingHandler.connect(owner).endVotingSession();
+    });
+
+    it("should update workflow to VotesTallied", async () => {
+      await expect(votingHandler.connect(owner).startTallySession())
+        .to.emit(votingHandler, "WorkflowStatusChange")
+        .withArgs(4, 5);
+    });
+
+    it("should revert (POV voter1)", async () => {
+      await expect(
+        votingHandler.connect(voter1).startTallySession()
+      ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+
+    it("should revert: instance is paused (POV owner)", async () => {
+      // Pause the instance
+      await votingHandler.connect(owner).removeInstance();
+      await expect(
+        votingHandler.connect(owner).startTallySession()
+      ).to.be.revertedWith("Pausable: paused");
+    });
+
+    it("should revert: workflow status is already VotingSessionEnded (POV owner)", async () => {
+      await votingHandler.connect(owner).startTallySession();
+      await expect(
+        votingHandler.connect(owner).startTallySession()
+      ).to.be.revertedWith("0x15");
+    });
+  });
+
+  describe("Tally votes", async () => {
+    beforeEach(async () => {
+      // Register voter1 and voter2 as voters
+      await votingHandler
+        .connect(owner)
+        .batchAuthorize([voter1.address, voter2.address]);
+      // Allow voters to add proposals
+      await votingHandler.connect(owner).authorizeVotersToAddProposals(true);
+      // Update workflow status
+      await votingHandler.connect(owner).startProposalsRegistration();
+      // Register proposals
+      await votingHandler.connect(voter1).registerProposal("Proposal 1");
+      await votingHandler.connect(voter2).registerProposal("Proposal 2");
+      // Update workflow status
+      await votingHandler.connect(owner).endProposalsRegistration();
+      await votingHandler.connect(owner).startVotingSession();
+    });
+
+    it("should get winner (POV owner)", async () => {
+      const description = "Proposal 1";
+      // Voters vote for a proposal
+      await votingHandler.connect(voter1).vote(0);
+      await votingHandler.connect(voter2).vote(0);
+      // Update workflow status
+      await votingHandler.connect(owner).endVotingSession();
+      await votingHandler.connect(owner).startTallySession();
+      // Tally votes
+      await votingHandler.connect(owner).tallyVotes();
+      // Get winner
+      expect(await votingHandler.connect(owner).getWinner()).to.be.equal(
+        description
+      );
+    });
+
+    it("should detect an equality and store the proposals concerned (POV owner)", async () => {
+      // Voters vote for two proposals
+      await votingHandler.connect(voter1).vote(0);
+      await votingHandler.connect(voter2).vote(1);
+      // Update workflow status
+      await votingHandler.connect(owner).endVotingSession();
+      await votingHandler.connect(owner).startTallySession();
+      // Tally votes
+      await votingHandler.connect(owner).tallyVotes();
+
+      // Proposals array must be updated
+      const tx = await votingHandler.connect(voter1).displayProposals();
+
+      for (i = 0; i < 2; i++) {
+        expect(tx[i][0]).to.be.equal("Proposal " + (i + 1));
+        expect(tx[i][1]).to.be.equal(0);
+      }
+    });
+
+    it("should start a second tour (POV owner)", async () => {
+      // Voters vote for two proposals
+      await votingHandler.connect(voter1).vote(0);
+      await votingHandler.connect(voter2).vote(1);
+      // Update workflow status
+      await votingHandler.connect(owner).endVotingSession();
+      await votingHandler.connect(owner).startTallySession();
+      // Tally votes
+      await expect(votingHandler.connect(owner).tallyVotes())
+        .to.emit(votingHandler, "WorkflowStatusChange")
+        .withArgs(5, 3);
+    });
+
+    it("should get winner after a second tour (POV owner)", async () => {
+      const description = "Proposal 1";
+      // Voters vote for two proposals
+      await votingHandler.connect(voter1).vote(0);
+      await votingHandler.connect(voter2).vote(1);
+      // Update workflow status
+      await votingHandler.connect(owner).endVotingSession();
+      await votingHandler.connect(owner).startTallySession();
+      // Tally votes
+      await votingHandler.connect(owner).tallyVotes();
+      // Second tour
+      await votingHandler.connect(voter1).vote(0);
+      await votingHandler.connect(voter2).vote(0);
+      // Update workflow status
+      await votingHandler.connect(owner).endVotingSession();
+      await votingHandler.connect(owner).startTallySession();
+      // Tally votes
+      await votingHandler.connect(owner).tallyVotes();
+      // Get winner
+      expect(await votingHandler.connect(owner).getWinner()).to.be.equal(
+        description
+      );
+    });
+
+    it("should revert (POV voter1)", async () => {
+      await expect(
+        votingHandler.connect(voter1).tallyVotes()
+      ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+
+    it("should revert: instance is paused (POV owner)", async () => {
+      // Pause the instance
+      await votingHandler.connect(owner).removeInstance();
+      await expect(
+        votingHandler.connect(owner).tallyVotes()
+      ).to.be.revertedWith("Pausable: paused");
+    });
+
+    it("should revert: workflow status is not VotesTallied (POV owner)", async () => {
+      await expect(
+        votingHandler.connect(owner).tallyVotes()
+      ).to.be.revertedWith("0x16");
+    });
+  });
+
+  describe("Get a specific vote", async () => {
+    beforeEach(async () => {
+      // Register voter1
+      await votingHandler.connect(owner).authorize(voter1.address);
+      // Allow voters to add proposals
+      await votingHandler.connect(owner).authorizeVotersToAddProposals(true);
+      // Update workflow status
+      await votingHandler.connect(owner).startProposalsRegistration();
+      // Register proposals
+      await votingHandler.connect(voter1).registerProposal("Proposal 1");
+      // Update workflow status
+      await votingHandler.connect(owner).endProposalsRegistration();
+      await votingHandler.connect(owner).startVotingSession();
+      // Vote for a proposal
+      await votingHandler.connect(voter1).vote(0);
+    });
+
+    it("should get the proposal id voted by voter1", async () => {
+      expect(
+        await votingHandler.connect(voter1).getSpecificVote(voter1.address)
+      ).to.be.equal(0);
+    });
+
+    it("should revert: caller is not a voter (POV nonVoter)", async () => {
+      await expect(
+        votingHandler.connect(nonVoter).getSpecificVote(voter1.address)
+      ).to.be.revertedWith("0x01");
+    });
+
+    it("should revert: instance is paused (POV voter1)", async () => {
+      // Pause the instance
+      await votingHandler.connect(owner).removeInstance();
+      await expect(
+        votingHandler.connect(voter1).getSpecificVote(voter1.address)
+      ).to.be.revertedWith("Pausable: paused");
+    });
+
+    it("should revert: voter2 has not voted (POV voter1)", async () => {
+      await expect(
+        votingHandler.connect(voter1).getSpecificVote(voter2.address)
+      ).to.be.revertedWith("0x17");
+    });
+  });
+
+  describe("Get winner", async () => {
+    beforeEach(async () => {
+      // Register voter1
+      await votingHandler.connect(owner).authorize(voter1.address);
+      // Allow voters to add proposals
+      await votingHandler.connect(owner).authorizeVotersToAddProposals(true);
+      // Update workflow status
+      await votingHandler.connect(owner).startProposalsRegistration();
+      // Register proposals
+      await votingHandler.connect(voter1).registerProposal("Proposal 1");
+      // Update workflow status
+      await votingHandler.connect(owner).endProposalsRegistration();
+      await votingHandler.connect(owner).startVotingSession();
+      // Vote for a proposal
+      await votingHandler.connect(voter1).vote(0);
+      // Update workflow status
+      await votingHandler.connect(owner).endVotingSession();
+    });
+
+    it("should get winner description (POV owner)", async () => {
+      // Update workflow status
+      await votingHandler.connect(owner).startTallySession();
+      // Tally votes
+      await votingHandler.connect(owner).tallyVotes();
+      // Get winner
+      expect(await votingHandler.connect(owner).getWinner()).to.be.equal(
+        "Proposal 1"
+      );
+    });
+
+    it("should revert: instance is paused (POV owner)", async () => {
+      // Pause the instance
+      await votingHandler.connect(owner).removeInstance();
+      await expect(votingHandler.connect(owner).getWinner()).to.be.revertedWith(
+        "Pausable: paused"
+      );
+    });
+
+    it("should revert: workflow status is not VotesTallied (POV owner)", async () => {
+      await expect(votingHandler.connect(owner).getWinner()).to.be.revertedWith(
+        "0x18"
       );
     });
   });
