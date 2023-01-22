@@ -277,7 +277,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
 
     /// @dev Called by registerProposal. Revert if keccak256 of two descriptions are equal.
     /// @param _description is the description of a new proposal suggested by a Voter.
-    function checkProposal(string memory _description) private whenNotPaused view {
+    function checkProposal(string memory _description) private view {
         uint allProposalsLength = allProposals.length; 
         for(uint i; i < allProposalsLength;) {
             if(keccak256(abi.encode(_description)) == keccak256(abi.encode(allProposals[i].description))) {
@@ -290,7 +290,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
 
     /// @dev Called by tallyVotes.
     /// @return highestNumber voteCount number for a proposal.
-    function getHighestVoteCount() private whenNotPaused view returns(uint highestNumber) {
+    function getHighestVoteCount() private view returns(uint highestNumber) {
         uint allProposalsLength = allProposals.length; 
         for(uint i; i < allProposalsLength;) {
             if(allProposals[i].voteCount > highestNumber) {
