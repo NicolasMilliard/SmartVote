@@ -7,12 +7,10 @@ export interface Props {
 
 const Layout: FC<Props> = ({ children }: Props) => {
   return (
-    <div>
-      <main>
-        <ConnectWallet />
-        {children}
-      </main>
-    </div>
+    <main className="w-full h-screen bg-purple-900">
+      {/* <ConnectWallet /> */}
+      {children}
+    </main>
   );
 };
 
