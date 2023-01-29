@@ -1,5 +1,4 @@
-import React, { FC } from "react";
-import type { AppProps } from "next/app";
+import React from "react";
 
 import {
   getDefaultWallets,
@@ -32,16 +31,15 @@ const wagmiClient = createClient({
   provider,
 });
 
-const App: FC<AppProps> = ({ Component, pageProps }) => {
+const App = ({ Component, pageProps }) => {
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider
         chains={chains}
         modalSize="compact"
         theme={darkTheme({
-          accentColor:
-            "linear-gradient(90deg, #FCD100 0%, #FD9A0B 47.4%, #FD3920 100%);",
-          accentColorForeground: "white",
+          accentColor: "#050507",
+          accentColorForeground: "#e1e1e5",
         })}
       >
         <SmartVoteProvider>

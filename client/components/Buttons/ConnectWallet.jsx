@@ -1,7 +1,6 @@
-import { FC } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
-const ConnectWallet: FC = () => {
+const ConnectWallet = () => {
   return (
     <ConnectButton
       showBalance={false}

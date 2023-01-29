@@ -23,6 +23,7 @@ const loadContract = (address, abi) => {
   } catch (error) {
     console.log("Contract error:" + error);
   }
+  return contract;
 };
 
 const SmartVoteProvider = (props) => {
@@ -32,6 +33,7 @@ const SmartVoteProvider = (props) => {
   // Load VotingFactory SC
   const init = useCallback(() => {
     let votingFactoryContract;
+    let votingHandlerContract;
 
     if (!chain) {
       return;
@@ -42,6 +44,19 @@ const SmartVoteProvider = (props) => {
         process.env.VOTING_FACTORY_LOCALHOST,
         votingFactoryContractArtifact.abi
       );
+
+      votingHandlerContract = loadContract(
+        process.env.VOTING_FACTORY_LOCALHOST,
+        votingHandlerContractArtifact.abi
+      );
+      console.log(
+        "[SmartVoteProvider] votingFactoryContract: " +
+          votingFactoryContract +
+          " - votingHandlerContract: " +
+          votingHandlerContract
+      );
+    } else {
+      console.log("Erreur SmartVoteProvider : pas la bonne BC");
     }
 
     try {
@@ -49,12 +64,13 @@ const SmartVoteProvider = (props) => {
         type: actions.INIT,
         data: {
           votingFactoryContract: votingFactoryContract,
+          votingHandlerContract: votingHandlerContract,
         },
       });
     } catch (error) {
       console.log("Could not load the SC.");
     }
-  }, [chain, dispatch, actions.INIT, votingFactoryContractArtifact.abi]);
+  }, []);
 
   /*  Call the init callback
       Reload SC if chain has changed
