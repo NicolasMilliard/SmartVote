@@ -1,22 +1,31 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./pages/**/*.{js,jsx}", "./components/**/*.{js,jsx}"],
   theme: {
+    fontFamily: {
+      sans: ["Roboto, sans-serif"],
+    },
     colors: {
       transparent: "transparent",
       current: "currentColor",
-      white: "#fefefe",
-      gray: "#a3a2a7",
-      purple: {
-        100: "#2b2b45",
-        900: "#171725",
+      white: "#e1e1e5",
+      gray: {
+        100: "#bbbbd2",
+        500: "#c3bdc8",
+        900: "#5c5b63",
       },
-      yellow: "#fcd100",
-      orange: "#fd9a0b",
-      red: "#fd3920",
+      black: "#050507",
+      red: "#e84949",
+    },
+    borderRadius: {
+      none: "0",
+      xs: "0.75rem",
+      sm: "0.875rem",
+      DEFAULT: "1rem",
+      full: "50%",
+    },
+    dropShadow: {
+      md: "0 0 16px rgba(5, 5, 7, 0.1)",
     },
   },
   plugins: [],
