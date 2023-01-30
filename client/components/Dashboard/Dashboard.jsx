@@ -3,7 +3,7 @@ import CreateClone from "./CreateClone";
 const Dashboard = ({ currentAccount }) => {
   return (
     <>
-      <p className="text-white">{currentAccount}</p>
+      <p>{currentAccount}</p>
       <CreateClone />
     </>
   );
