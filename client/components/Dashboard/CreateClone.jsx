@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Button from "../../Buttons/Button";
-import ButtonLoader from "../../Buttons/ButtonLoader";
+import Button from "../Buttons/Button";
+import ButtonLoader from "../Buttons/ButtonLoader";
 
-import { useSmartVote } from "../../../context";
+import { useSmartVote } from "../../context";
 
 const CreateClone = () => {
   const {
