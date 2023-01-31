@@ -1,13 +1,14 @@
 import Menu from "../Layout/Menu/Menu";
 import Navbar from "../Layout/Navbar/Navbar";
-import CreateClone from "./CreateClone";
+import VotingSessionCardsList from "./VotingSessionCardsList";
 
-const Dashboard = ({ currentAccount }) => {
+const Dashboard = () => {
   return (
     <>
       <Menu />
       <section className="my-20 mx-8 md:mx-20 xl:mx-40">
         <Navbar />
+        <VotingSessionCardsList />
       </section>
     </>
   );
