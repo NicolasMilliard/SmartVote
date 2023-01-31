@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import Logo from "../components/Layout/Navbar/Logo";
+import Logo from "../components/Layout/Logo";
 import ConnectWallet from "../components/Buttons/ConnectWallet";
 import Dashboard from "../components/Dashboard/Dashboard";
 import LatestVotingSession from "../components/Dashboard/LatestVotingSession";
