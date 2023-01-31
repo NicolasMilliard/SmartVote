@@ -24,8 +24,8 @@ module.exports = {
       DEFAULT: "1rem",
       full: "50%",
     },
-    dropShadow: {
-      md: "0 0 16px rgba(5, 5, 7, 0.1)",
+    boxShadow: {
+      DEFAULT: "0 0 16px rgba(5, 5, 7, 0.1)",
     },
   },
   plugins: [],
