@@ -29,15 +29,43 @@ const wagmiClient = createClient({
   provider,
 });
 
+const customAvatar = ({ ensImage, size }) => {
+  return ensImage ? (
+    <img
+      src={ensImage}
+      width={size}
+      height={size}
+      style={{ borderRadius: 999 }}
+    />
+  ) : (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#050507",
+        color: "#e1e1e5",
+        height: size,
+        width: size,
+      }}
+    >
+      SV
+    </div>
+  );
+};
+
 const App = ({ Component, pageProps }) => {
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider
         chains={chains}
         modalSize="compact"
+        avatar={customAvatar}
         theme={lightTheme({
           accentColor: "#050507",
           accentColorForeground: "#e1e1e5",
+          borderRadius: "medium",
+          fontStack: "system",
         })}
       >
         <SmartVoteProvider>
