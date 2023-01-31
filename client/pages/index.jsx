@@ -3,11 +3,12 @@ import { useAccount } from "wagmi";
 import Logo from "../components/Layout/Logo";
 import ConnectWallet from "../components/Buttons/ConnectWallet";
 import Dashboard from "../components/Dashboard/Dashboard";
-import LatestVotingSession from "../components/Dashboard/LatestVotingSession";
+import LatestVotingSessionsList from "../components/Homepage/LatestVotingSessionsList";
 
 const HomePage = () => {
   const { address } = useAccount();
-  const [currentAccount, setCurrentAccount] = useState("");
+  // Used to fix hydration error
+  const [hasMounted, setHasMounted] = useState(false);
 
   const latestEvents = [
     {
@@ -62,18 +63,15 @@ const HomePage = () => {
     },
   ];
 
-  // Check if user is connected
-  const checkCurrentAccount = () => {
-    if (address) setCurrentAccount(address);
-  };
-
   useEffect(() => {
-    checkCurrentAccount();
-  }, [currentAccount]);
+    setHasMounted(true);
+  });
+
+  if (!hasMounted) return null;
 
   return (
     <>
-      {!currentAccount ? (
+      {!address ? (
         <>
           <section className="flex flex-col justify-center items-center mx-8">
             <div className="mt-10 md:mt-40">
@@ -86,10 +84,10 @@ const HomePage = () => {
               <ConnectWallet />
             </div>
           </section>
-          <LatestVotingSession events={latestEvents} />
+          <LatestVotingSessionsList events={latestEvents} />
         </>
       ) : (
-        <Dashboard currentAccount={currentAccount} />
+        <Dashboard />
       )}
     </>
   );
