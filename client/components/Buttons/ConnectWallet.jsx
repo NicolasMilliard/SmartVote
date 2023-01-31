@@ -4,7 +4,7 @@ const ConnectWallet = () => {
   return (
     <ConnectButton
       showBalance={false}
-      chainStatus="none"
+      chainStatus="icon"
       accountStatus="address"
     />
   );
