@@ -3,7 +3,7 @@ const Button = ({ text, customFunction }) => {
     <button
       type="button"
       onClick={customFunction}
-      className="font-bold py-2 px-4 rounded-xl"
+      className="bg-black text-white font-bold py-4 px-6 rounded"
     >
       {text}
     </button>
