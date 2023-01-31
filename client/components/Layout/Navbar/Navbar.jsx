@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Button from "../../Buttons/Button";
+import CreateNewVotingSession from "../../Dashboard/CreateNewVotingSession";
 
 const Navbar = () => {
   const [isActive, setIsActive] = useState(0);
@@ -31,7 +31,7 @@ const Navbar = () => {
           </button>
         ))}
       </div>
-      <Button text="Create a new Voting Session" />
+      <CreateNewVotingSession />
     </nav>
   );
 };
