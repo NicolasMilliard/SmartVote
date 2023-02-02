@@ -42,7 +42,7 @@ html {
   }
 }
 
-/* Navbar */
+/* Underline role */
 .role-active:after {
   content: "";
   display: block;
@@ -62,4 +62,23 @@ html {
   100% {
     transform: scaleX(1);
   }
+}
+
+/* Delete icon */
+.delete-icon {
+  width: 16px;
+  height: 18px;
+  fill: #e84949;
+}
+
+.delete-button:hover .delete-icon,
+.manage-button:hover .manage-icon {
+  fill: #050507;
+}
+
+/* Manage icon */
+.manage-icon {
+  width: 10px;
+  height: 16px;
+  fill: #e1e1e5;
 }
