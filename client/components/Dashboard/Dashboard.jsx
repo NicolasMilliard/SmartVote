@@ -47,17 +47,17 @@ const Dashboard = () => {
   return (
     <>
       <Menu />
-      <section className="my-20 mx-8 md:mx-20 xl:mx-40">
-        <nav className="flex justify-between">
-          <div className="flex gap-20">
+      <section className="my-8 sm:my-20 mx-8 md:mx-20 xl:mx-40">
+        <nav className="flex flex-col sm:flex-row justify-between">
+          <div className="flex gap-6 xl:gap-20 mb-8 sm:mb-0">
             {rolesArray.map((role) => (
               <button
                 key={role.id}
                 onClick={() => handleRole(role.id)}
                 className={
                   role.id === currentRole
-                    ? "font-bold text-black text-2xl role-active"
-                    : "font-bold text-gray-900 hover:text-black text-2xl"
+                    ? "font-bold text-black text-xl sm:text-2xl role-active"
+                    : "font-bold text-gray-900 hover:text-black text-xl sm:text-2xl"
                 }
               >
                 {role.title}
