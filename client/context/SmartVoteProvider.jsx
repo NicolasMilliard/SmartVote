@@ -35,36 +35,28 @@ const SmartVoteProvider = (props) => {
     let votingFactoryContract;
     let votingHandlerContract;
 
-    if (!chain) {
-      return;
-    }
+    if (!chain) return;
 
     if (chain.name === "Localhost") {
       votingFactoryContract = loadContract(
         process.env.VOTING_FACTORY_LOCALHOST,
         votingFactoryContractArtifact.abi
       );
-
-      votingHandlerContract = loadContract(
-        process.env.VOTING_FACTORY_LOCALHOST,
-        votingHandlerContractArtifact.abi
-      );
-      console.log(
-        "[SmartVoteProvider] votingFactoryContract: " +
-          votingFactoryContract +
-          " - votingHandlerContract: " +
-          votingHandlerContract
-      );
     } else {
       console.log("Erreur SmartVoteProvider : pas la bonne BC");
     }
 
     try {
+      // Voting handler
+      const getVotingHandler = (address) => {
+        return loadContract(address, votingHandlerContractArtifact.abi);
+      };
+
       dispatch({
         type: actions.INIT,
         data: {
           votingFactoryContract: votingFactoryContract,
-          votingHandlerContract: votingHandlerContract,
+          getVotingHandler: getVotingHandler,
         },
       });
     } catch (error) {
