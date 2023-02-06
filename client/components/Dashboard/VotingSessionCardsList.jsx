@@ -7,7 +7,7 @@ import ButtonDelete from "../Buttons/ButtonDelete";
 const VotingSessionCardsList = ({ role, reloadList }) => {
   const { address } = useAccount();
   const {
-    state: { votingFactoryContract },
+    state: { votingFactoryContract, getVotingHandler },
   } = useSmartVote();
   const [instances, setInstances] = useState([]);
 
@@ -28,7 +28,15 @@ const VotingSessionCardsList = ({ role, reloadList }) => {
         let sender = events[i].args[0];
         let contract = events[i].args[1];
 
-        allEvents.push({ sender: sender, contract: contract });
+        // Get instance name
+        const votingHandlerContract = await getVotingHandler(contract);
+        const name = await votingHandlerContract.votingSessionName();
+
+        allEvents.push({
+          sender: sender,
+          contract: contract,
+          contractName: name,
+        });
       }
 
       setInstances(allEvents);
@@ -49,7 +57,9 @@ const VotingSessionCardsList = ({ role, reloadList }) => {
           className="flex flex-col items-center px-8 py-6 rounded shadow"
         >
           <h3 className="text-black font-bold text-4xl">
-            Vote for your future
+            {instance.contractName != ""
+              ? instance.contractName
+              : `Voting Session #${instance.contract.slice(2, 6)}`}
           </h3>
           <div className="text-gray-900 mt-4">
             Current status:
