@@ -1,6 +1,9 @@
-const ButtonDelete = ({ text }) => {
+const ButtonDelete = ({ text, customFunction }) => {
   return (
-    <button className="flex items-center text-red font-bold hover:text-black py-1 pr-1 rounded delete-button">
+    <button
+      className="flex items-center text-red font-bold hover:text-black py-1 pr-1 rounded delete-button"
+      onClick={customFunction}
+    >
       <span className="mr-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
