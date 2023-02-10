@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import Menu from "../Layout/Menu/Menu";
-import VotingSessionCardsList from "./VotingSessionCardsList";
+import VotingSessionCardsList from "./VotingSessionCards/VotingSessionCardsList";
 import Button from "../Buttons/Button";
 import ButtonLoader from "../Buttons/ButtonLoader";
 

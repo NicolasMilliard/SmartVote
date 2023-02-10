@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSmartVote } from "../../context";
+import { useSmartVote } from "../../../context";
 import { useAccount } from "wagmi";
 
 import VotingSessionCard from "./VotingSessionCard";
@@ -67,7 +67,7 @@ const VotingSessionCardsList = ({ role, reloadList }) => {
         {instances.map((instance) => (
           <VotingSessionCard
             key={instance.contract}
-            contract={instance.contract}
+            contractAddress={instance.contract}
             instanceName={instance.contractName}
             updateInstancesList={updateInstancesList}
           />
