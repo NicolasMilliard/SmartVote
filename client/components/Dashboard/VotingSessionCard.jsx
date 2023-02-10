@@ -4,12 +4,14 @@ import { useSmartVote } from "../../context";
 
 import Button from "../Buttons/Button";
 import ButtonDelete from "../Buttons/ButtonDelete";
+import ButtonLoader from "../Buttons/ButtonLoader";
 
 const VotingSessionCard = ({ contract, instanceName, updateInstancesList }) => {
   const {
     state: { getVotingHandler },
   } = useSmartVote();
   const [deleteInstancePopUp, setDeleteInstancePopUp] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const contractRef = useRef("");
 
   // Toggle pop-up
@@ -25,6 +27,8 @@ const VotingSessionCard = ({ contract, instanceName, updateInstancesList }) => {
     try {
       if (!getVotingHandler) return;
 
+      setIsLoading(true);
+
       const contract = await getVotingHandler(contractAddress);
 
       const tx = await contract.removeInstance();
@@ -32,10 +36,12 @@ const VotingSessionCard = ({ contract, instanceName, updateInstancesList }) => {
 
       // Toggle pop-up
       togglePopUp();
+      setIsLoading(false);
 
       // Refresh VotingSessionCardsList component
       updateInstancesList();
     } catch (error) {
+      setIsLoading(false);
       console.log(error);
     }
   };
@@ -68,15 +74,19 @@ const VotingSessionCard = ({ contract, instanceName, updateInstancesList }) => {
               <button onClick={togglePopUp} className="hover:underline">
                 Cancel
               </button>
-              <Button
-                text={
-                  instanceName != ""
-                    ? `Delete ${instanceName}`
-                    : `Delete Voting Session #${contract.slice(2, 6)}`
-                }
-                customFunction={() => deleteInstance(contract)}
-                theme="red"
-              />
+              {isLoading ? (
+                <ButtonLoader theme="red" />
+              ) : (
+                <Button
+                  text={
+                    instanceName != ""
+                      ? `Delete ${instanceName}`
+                      : `Delete Voting Session #${contract.slice(2, 6)}`
+                  }
+                  customFunction={() => deleteInstance(contract)}
+                  theme="red"
+                />
+              )}
             </div>
           </div>
           <button id="delete-popup-background" onClick={togglePopUp}></button>
