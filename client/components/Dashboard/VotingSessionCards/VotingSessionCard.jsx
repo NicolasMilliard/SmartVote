@@ -6,6 +6,10 @@ import ButtonDelete from "../../Buttons/ButtonDelete";
 
 import { useSmartVote } from "../../../context";
 
+import { getStatus } from "../../../utils/instance/getStatus";
+import { getTotalVoters } from "../../../utils/instance/getTotalVoters";
+import { getTotalProposals } from "../../../utils/instance/getTotalProposals";
+
 const VotingSessionCard = ({
   contractAddress,
   instanceName,
@@ -15,34 +19,32 @@ const VotingSessionCard = ({
     state: { getVotingHandler },
   } = useSmartVote();
   const [status, setStatus] = useState("");
+  const [totalVoters, setTotalVoters] = useState(0);
+  const [totalProposals, setTotalProposals] = useState(0);
   const [deleteInstancePopUp, setDeleteInstancePopUp] = useState(false);
 
-  const workflowStatus = [
-    "Registering Voters",
-    "Proposals Registration Started",
-    "Proposals Registration Ended",
-    "Voting Session Started",
-    "Voting Session Ended",
-    "Votes Tallied",
-  ];
-
   // Get current status of the instance
-  const getStatus = async () => {
-    try {
-      if (!getVotingHandler) return;
+  const handleStatus = async () => {
+    setStatus(await getStatus(getVotingHandler, contractAddress));
+  };
 
-      const contract = await getVotingHandler(contractAddress);
+  // Get total voters
+  const handleVoterscount = async () => {
+    setTotalVoters(await getTotalVoters(getVotingHandler, contractAddress));
+  };
 
-      const tx = await contract.votingStatus();
-      setStatus(workflowStatus[tx]);
-    } catch (error) {
-      console.log(error);
-    }
+  // Get total proposals
+  const handleTotalProposals = async () => {
+    setTotalProposals(
+      await getTotalProposals(getVotingHandler, contractAddress)
+    );
   };
 
   useEffect(() => {
-    getStatus();
-  }, []);
+    handleStatus();
+    handleVoterscount();
+    handleTotalProposals();
+  }, [getVotingHandler]);
 
   // Toggle pop-up
   const togglePopUp = () => {
@@ -70,12 +72,18 @@ const VotingSessionCard = ({
           <span className="font-bold"> {status}</span>
         </div>
         <div className="text-black mt-8">
-          <span className="font-bold">18 Voters</span> are in this voting
-          session.
+          <span className="font-bold">
+            {totalVoters > 0 ? `${totalVoters} voters ` : `No voter `}
+          </span>{" "}
+          are in this voting session.
         </div>
         <div className="text-black mt-6">
-          <span className="font-bold">16 Proposals</span> have been added so
-          far.
+          <span className="font-bold">
+            {totalProposals > 0
+              ? `${totalProposals} proposals `
+              : `No proposal `}
+          </span>
+          have been added so far.
         </div>
         <div className="flex gap-10 mt-8">
           <ButtonDelete text="Delete session" customFunction={togglePopUp} />
