@@ -17,8 +17,13 @@ const VotingSessionCardsList = ({ role, reloadList }) => {
     setCheckInstances(!checkInstances);
   };
 
-  // Get all instances of the connected address
-  const getInstances = async () => {
+  // Get non voter instances
+  const getInstancesAsNonVoter = () => {
+    console.log("getInstancesAsNonVoter");
+  };
+
+  // Get administrator instances
+  const getInstancesAsAdministrator = async () => {
     try {
       if (!votingFactoryContract) return;
 
@@ -32,7 +37,6 @@ const VotingSessionCardsList = ({ role, reloadList }) => {
       let allEvents = [];
 
       for (let i = 0; i < events.length; i++) {
-        let sender = events[i].args[0];
         let contract = events[i].args[1];
 
         // Get instance name
@@ -44,22 +48,90 @@ const VotingSessionCardsList = ({ role, reloadList }) => {
 
         if (!isPaused) {
           allEvents.push({
-            sender: sender,
             contract: contract,
             contractName: name,
           });
         }
       }
-
       setInstances(allEvents);
     } catch (error) {
       console.log(error);
     }
   };
 
+  // Get voter instances
+  const getInstancesAsVoter = async () => {
+    try {
+      if (!votingFactoryContract) return;
+
+      // Get all instances created
+      const instancesEventFilter = votingFactoryContract.filters.NewInstance();
+      const instancesEvents = await votingFactoryContract.queryFilter(
+        instancesEventFilter,
+        0
+      );
+
+      let instancesEventsArr = [];
+
+      for (let i = 0; i < instancesEvents.length; i++) {
+        let contract = instancesEvents[i].args[1];
+
+        // Check if address is a voter
+        const votingHandlerContract = await getVotingHandler(contract);
+        const votersEventFilter =
+          votingHandlerContract.filters.VoterRegistered(address);
+        const votersEvents = await votingHandlerContract.queryFilter(
+          votersEventFilter,
+          0
+        );
+
+        for (let j = 0; j < votersEvents.length; j++) {
+          // Get instance name
+          const name = await votingHandlerContract.votingSessionName();
+
+          // Check if this instance was paused
+          const isPaused = await votingHandlerContract.paused();
+
+          if (!isPaused) {
+            instancesEventsArr.push({
+              contract: contract,
+              contractName: name,
+            });
+          }
+        }
+      }
+      setInstances(instancesEventsArr);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Get all instances of the connected address
+  const getInstances = async () => {
+    // If "Non Voter" is selected
+    if (role == 2) {
+      getInstancesAsNonVoter();
+      return;
+    }
+
+    if (!votingFactoryContract) return;
+
+    // If "Administrator" is selected
+    if (role == 0) {
+      getInstancesAsAdministrator();
+      return;
+    }
+
+    // If "Voter" is selected
+    if (role == 1) {
+      getInstancesAsVoter();
+      return;
+    }
+  };
+
   useEffect(() => {
     getInstances();
-  }, [votingFactoryContract, checkInstances, reloadList]);
+  }, [role, votingFactoryContract, checkInstances, reloadList]);
 
   return (
     <>
