@@ -1,4 +1,4 @@
-export const getVotersCount = async (getVotingHandler, contractAddress) => {
+export const getTotalVoters = async (getVotingHandler, contractAddress) => {
   try {
     if (!getVotingHandler) return;
 
