@@ -130,14 +130,14 @@ describe("VotingHandler", async () => {
       await votingHandler.connect(owner).startProposalsRegistration();
       await expect(
         votingHandler.connect(owner).authorize(voter1.address)
-      ).to.be.revertedWith("0x05");
+      ).to.be.revertedWith("0x03");
     });
 
     it("should revert: voter1 is already registered (POV owner)", async () => {
       await votingHandler.connect(owner).authorize(voter1.address);
       await expect(
         votingHandler.connect(owner).authorize(voter1.address)
-      ).to.be.revertedWith("0x06");
+      ).to.be.revertedWith("0x04");
     });
   });
 
@@ -149,11 +149,11 @@ describe("VotingHandler", async () => {
       // Must revert if voter1 was properly added
       await expect(
         votingHandler.connect(owner).authorize(voter1.address)
-      ).to.be.revertedWith("0x06");
+      ).to.be.revertedWith("0x04");
       // Must revert if voter2 was properly added
       await expect(
         votingHandler.connect(owner).authorize(voter2.address)
-      ).to.be.revertedWith("0x06");
+      ).to.be.revertedWith("0x04");
     });
 
     it("should revert (POV voter1)", async () => {
@@ -181,7 +181,7 @@ describe("VotingHandler", async () => {
         votingHandler
           .connect(owner)
           .batchAuthorize([voter1.address, voter2.address])
-      ).to.be.revertedWith("0x05");
+      ).to.be.revertedWith("0x03");
     });
 
     it("should revert: voter1 is already registered (POV owner)", async () => {
@@ -192,7 +192,7 @@ describe("VotingHandler", async () => {
         votingHandler
           .connect(owner)
           .batchAuthorize([voter1.address, voter2.address])
-      ).to.be.revertedWith("0x06");
+      ).to.be.revertedWith("0x04");
     });
   });
 
@@ -228,7 +228,7 @@ describe("VotingHandler", async () => {
       await votingHandler.connect(owner).startProposalsRegistration();
       await expect(
         votingHandler.connect(owner).authorizeVotersToAddProposals(permission)
-      ).to.be.revertedWith("0x07");
+      ).to.be.revertedWith("0x05");
     });
   });
 
@@ -258,7 +258,7 @@ describe("VotingHandler", async () => {
       await votingHandler.connect(owner).startProposalsRegistration();
       await expect(
         votingHandler.connect(owner).startProposalsRegistration()
-      ).to.be.revertedWith("0x08");
+      ).to.be.revertedWith("0x06");
     });
   });
 
@@ -310,7 +310,7 @@ describe("VotingHandler", async () => {
       const description = "Proposal description";
       await expect(
         votingHandler.connect(owner).registerProposal(description)
-      ).to.be.revertedWith("0x09");
+      ).to.be.revertedWith("0x07");
     });
 
     it("should revert: voters can't add proposals (POV voter1)", async () => {
@@ -319,7 +319,7 @@ describe("VotingHandler", async () => {
       await votingHandler.connect(owner).startProposalsRegistration();
       await expect(
         votingHandler.connect(voter1).registerProposal(description)
-      ).to.be.revertedWith("0x10");
+      ).to.be.revertedWith("0x08");
     });
 
     it("should revert: proposal already submitted (POV owner)", async () => {
@@ -330,7 +330,7 @@ describe("VotingHandler", async () => {
       // Add same proposal a second time
       await expect(
         votingHandler.connect(owner).registerProposal(description)
-      ).to.be.revertedWith("0x19");
+      ).to.be.revertedWith("0x18");
     });
   });
 
@@ -363,7 +363,7 @@ describe("VotingHandler", async () => {
       await votingHandler.connect(owner).endProposalsRegistration();
       await expect(
         votingHandler.connect(owner).endProposalsRegistration()
-      ).to.be.revertedWith("0x11");
+      ).to.be.revertedWith("0x09");
     });
   });
 
@@ -445,7 +445,7 @@ describe("VotingHandler", async () => {
       await votingHandler.connect(owner).startVotingSession();
       await expect(
         votingHandler.connect(owner).startVotingSession()
-      ).to.be.revertedWith("0x12");
+      ).to.be.revertedWith("0x10");
     });
   });
 
@@ -489,7 +489,7 @@ describe("VotingHandler", async () => {
 
     it("should revert: workflow status is not VotingSessionStarted (POV owner)", async () => {
       await expect(votingHandler.connect(voter1).vote(0)).to.be.revertedWith(
-        "0x13"
+        "0x11"
       );
     });
 
@@ -498,7 +498,7 @@ describe("VotingHandler", async () => {
       await votingHandler.connect(owner).startVotingSession();
       await votingHandler.connect(voter1).vote(0);
       await expect(votingHandler.connect(voter1).vote(0)).to.be.revertedWith(
-        "0x14"
+        "0x12"
       );
     });
   });
@@ -572,7 +572,7 @@ describe("VotingHandler", async () => {
       await votingHandler.connect(owner).startTallySession();
       await expect(
         votingHandler.connect(owner).startTallySession()
-      ).to.be.revertedWith("0x15");
+      ).to.be.revertedWith("0x14");
     });
   });
 
@@ -683,7 +683,7 @@ describe("VotingHandler", async () => {
     it("should revert: workflow status is not VotesTallied (POV owner)", async () => {
       await expect(
         votingHandler.connect(owner).tallyVotes()
-      ).to.be.revertedWith("0x16");
+      ).to.be.revertedWith("0x15");
     });
   });
 
@@ -727,7 +727,7 @@ describe("VotingHandler", async () => {
     it("should revert: voter2 has not voted (POV voter1)", async () => {
       await expect(
         votingHandler.connect(voter1).getSpecificVote(voter2.address)
-      ).to.be.revertedWith("0x17");
+      ).to.be.revertedWith("0x16");
     });
   });
 
@@ -771,7 +771,7 @@ describe("VotingHandler", async () => {
 
     it("should revert: workflow status is not VotesTallied (POV owner)", async () => {
       await expect(votingHandler.connect(owner).getWinner()).to.be.revertedWith(
-        "0x18"
+        "0x17"
       );
     });
   });
