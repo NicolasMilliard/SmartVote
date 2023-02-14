@@ -22,6 +22,12 @@ const main = async () => {
   await votingHandler.deployed();
   console.log(`VotingHandler is deployed: ${votingHandler.address}`);
 
+  // Deploy InstancesList
+  const InstancesList = await hre.ethers.getContractFactory("InstancesList");
+  const instancesList = await InstancesList.deploy();
+  await instancesList.deployed();
+  console.log(`InstancesList is deployed: ${instancesList.address}`);
+
   // Deployer's balance after deployment
   balance = await deployer.getBalance();
   console.log(`Deployer new balance: ${hre.ethers.utils.formatEther(balance)}`);
