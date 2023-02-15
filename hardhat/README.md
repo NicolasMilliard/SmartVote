@@ -166,16 +166,54 @@ VotingHandler
 ·---------------------------------------------------|-------------|-------------|-------------|---------------|-------------·
 ```
 
+**Smart Contract InstancesList**
+
+```sh
+InstancesList
+    b_A6Q (register an instance)
+      √ should store an instance
+      √ should store multiple instances
+      √ should store instance after a removing
+      √ should revert: instance is already store
+    removeInstance
+      √ should remove the first instance
+      √ should remove the second instance
+      √ should revert: array is empty
+```
+
+**Hardhat-gas-reporter**
+
+```sh
+·------------------------------------|---------------------------|-------------|-----------------------------·
+|        Solc version: 0.8.17        ·  Optimizer enabled: true  ·  Runs: 200  ·  Block limit: 30000000 gas  │
+·····································|···························|·············|······························
+|  Methods                                                                                                   │
+··················|··················|·············|·············|·············|···············|··············
+|  Contract       ·  Method          ·  Min        ·  Max        ·  Avg        ·  # calls      ·  eur (avg)  │
+··················|··················|·············|·············|·············|···············|··············
+|  InstancesList  ·  b_A6Q           ·      51069  ·      67400  ·      61598  ·           10  ·          -  │
+··················|··················|·············|·············|·············|···············|··············
+|  InstancesList  ·  removeInstance  ·      24839  ·      27307  ·      25662  ·            3  ·          -  │
+··················|··················|·············|·············|·············|···············|··············
+|  Deployments                       ·                                         ·  % of limit   ·             │
+·····································|·············|·············|·············|···············|··············
+|  InstancesList                     ·          -  ·          -  ·     323554  ·        1.1 %  ·          -  │
+·------------------------------------|-------------|-------------|-------------|---------------|-------------·
+```
+
 **Coverage**
 
 ```sh
 --------------------|----------|----------|----------|----------|----------------|
 File                |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
 --------------------|----------|----------|----------|----------|----------------|
- contracts\         |      100 |      100 |      100 |      100 |                |
+ contracts\         |      100 |    98.44 |      100 |      100 |                |
+  InstancesList.sol |      100 |      100 |      100 |      100 |                |
   VotingFactory.sol |      100 |      100 |      100 |      100 |                |
-  VotingHandler.sol |      100 |      100 |      100 |      100 |                |
+  VotingHandler.sol |      100 |    98.25 |      100 |      100 |                |
 --------------------|----------|----------|----------|----------|----------------|
-All files           |      100 |      100 |      100 |      100 |                |
+All files           |      100 |    98.44 |      100 |      100 |                |
 --------------------|----------|----------|----------|----------|----------------|
 ```
+
+Note: VotingHandler is not tested 100% because of the modifier `whenNotPaused` on two privates functions: `checkProposals` and `getHighestVoteCount`. However, these two functions are tested within their "parent" function.
