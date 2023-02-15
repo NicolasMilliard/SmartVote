@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.18;
+pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -22,7 +22,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     bool votersCanAddProposals;
 
     /// @dev Store the details of each voter in a mapping
-    mapping (address voter => Voter voterDetails) voters;
+    mapping (address => Voter) voters;
 
     /// @dev Store all votersAddress in an array
     address[] votersAddress;

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.18;
+pragma solidity 0.8.17;
 
 /**
  * @title InstancesList
@@ -10,7 +10,7 @@ pragma solidity 0.8.18;
  */
 contract InstancesList {
     /// @dev Store an array of contract addresses for each owner
-    mapping(address owner => address[] contractAddresses) instancesList;
+    mapping(address => address[]) instancesList;
 
     /**
      * @notice Check if the address is not already registered
@@ -20,7 +20,7 @@ contract InstancesList {
         uint length = instancesList[msg.sender].length;
 
         for(uint i; i < length;) {
-            require(instancesList[msg.sender][i] != _contractAddress, "0x20");
+            require(instancesList[msg.sender][i] != _contractAddress, "0x19");
             // Safely optimize gas cost (i can't be overflow)
             unchecked { i++; }
         }
@@ -30,7 +30,7 @@ contract InstancesList {
     /**
      * @notice Register a contract in the array
      * @dev If a previous contract was deleted, the new contract address is store at its index
-     * @param _contractAddress  is the address of the contract to register
+     * @param _contractAddress is the address of the contract to register
      */
     function b_A6Q(address _contractAddress) external checkAddress(_contractAddress) {
         address[] storage ownerList = instancesList[msg.sender];
@@ -67,6 +67,8 @@ contract InstancesList {
      */
     function removeInstance(address _contractAddress) external {
         uint length = instancesList[msg.sender].length;
+
+        require(length > 0, "0x20");
 
         for(uint i; i < length;) {
             if(instancesList[msg.sender][i] == _contractAddress) {
