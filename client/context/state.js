@@ -5,6 +5,7 @@ const actions = {
 const initialState = {
   votingFactory: null,
   getVotingHandler: null,
+  instancesList: null,
 };
 
 const reducer = (state, action) => {
