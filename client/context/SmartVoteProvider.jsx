@@ -4,6 +4,7 @@ import { useNetwork } from "wagmi";
 
 import votingFactoryContractArtifact from "../artifacts/contracts/VotingFactory.sol/VotingFactory.json";
 import votingHandlerContractArtifact from "../artifacts/contracts/VotingHandler.sol/VotingHandler.json";
+import instancesListContractArtifact from "../artifacts/contracts/InstancesList.sol/InstancesList.json";
 
 import SmartVoteContext from "./SmartVoteContext";
 import { actions, initialState, reducer } from "./state";
@@ -30,20 +31,35 @@ const SmartVoteProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { chain } = useNetwork();
 
-  // Load VotingFactory SC
+  // Load VotingFactory and InstancesList SC
   const init = useCallback(() => {
     let votingFactoryContract;
-    let votingHandlerContract;
+    let instancesListContract;
 
     if (!chain) return;
 
     if (chain.name === "Localhost") {
+      // VotingFactory
       votingFactoryContract = loadContract(
         process.env.VOTING_FACTORY_LOCALHOST,
         votingFactoryContractArtifact.abi
       );
+      // InstancesList
+      instancesListContract = loadContract(
+        process.env.INSTANCES_LIST_LOCALHOST,
+        instancesListContractArtifact.abi
+      );
     } else {
-      console.log("Erreur SmartVoteProvider : pas la bonne BC");
+      // VotingFactory
+      votingFactoryContract = loadContract(
+        process.env.VOTING_FACTORY_MUMBAI,
+        votingFactoryContractArtifact.abi
+      );
+      // InstancesList
+      instancesListContract = loadContract(
+        process.env.INSTANCES_LIST_MUMBAI,
+        instancesListContractArtifact.abi
+      );
     }
 
     try {
@@ -56,6 +72,7 @@ const SmartVoteProvider = (props) => {
         type: actions.INIT,
         data: {
           votingFactoryContract: votingFactoryContract,
+          instancesListContract: instancesListContract,
           getVotingHandler: getVotingHandler,
         },
       });
