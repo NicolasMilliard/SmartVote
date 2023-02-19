@@ -7,19 +7,15 @@ import VotingSessionCard from "./VotingSessionCard";
 const VotingSessionCardsList = ({ role, reloadList }) => {
   const { address } = useAccount();
   const {
-    state: { votingFactoryContract, getVotingHandler },
+    state: { votingFactoryContract, getVotingHandler, instancesListContract },
   } = useSmartVote();
   const [instances, setInstances] = useState([]);
   const [checkInstances, setCheckInstances] = useState(false);
+  const zeroAddress = "0x0000000000000000000000000000000000000000";
 
   // Refresh instances
   const updateInstancesList = () => {
     setCheckInstances(!checkInstances);
-  };
-
-  // Get non voter instances
-  const getInstancesAsNonVoter = () => {
-    console.log("getInstancesAsNonVoter");
   };
 
   // Get administrator instances
@@ -101,6 +97,43 @@ const VotingSessionCardsList = ({ role, reloadList }) => {
         }
       }
       setInstances(instancesEventsArr);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Get non voter instances
+  const getInstancesAsNonVoter = async () => {
+    try {
+      if (!instancesListContract) return;
+
+      // Get all instances stored by the user
+      const tx = await instancesListContract.getInstancesList();
+
+      let allInstances = [];
+
+      for (let i = 0; i < tx.length; i++) {
+        let contract = tx[i];
+
+        if (contract == zeroAddress) {
+          i++;
+        } else {
+          // Get instance name
+          const votingHandlerContract = await getVotingHandler(contract);
+          const name = await votingHandlerContract.votingSessionName();
+
+          // Check if this instance was paused
+          const isPaused = await votingHandlerContract.paused();
+
+          if (!isPaused) {
+            allInstances.push({
+              contract: contract,
+              contractName: name,
+            });
+          }
+        }
+      }
+      setInstances(allInstances);
     } catch (error) {
       console.log(error);
     }
