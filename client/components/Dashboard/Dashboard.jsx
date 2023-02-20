@@ -46,7 +46,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <Menu />
+      <Menu isInstance={false} />
       <section className="my-8 sm:my-20 mx-8 md:mx-20 xl:mx-40">
         <nav className="flex flex-col sm:flex-row justify-between">
           <div className="flex gap-6 xl:gap-20 mb-8 sm:mb-0">
