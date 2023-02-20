@@ -11,6 +11,16 @@ const Button = ({ text, customFunction, theme }) => {
             {text}
           </button>
         );
+      case "half":
+        return (
+          <button
+            type="button"
+            onClick={customFunction}
+            className="bg-black text-white font-bold py-4 px-6 rounded-tr rounded-br hover:bg-white hover:text-black outline hover:outline-black hover:outline-2"
+          >
+            {text}
+          </button>
+        );
       default:
         return (
           <button
