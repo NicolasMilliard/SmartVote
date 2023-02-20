@@ -124,3 +124,10 @@ html {
 .cross-icon div:last-child {
   transform: rotate(-45deg);
 }
+
+/* Return to dashboard icon */
+.dashboard-icon {
+  width: 10px;
+  height: 16px;
+  transform: rotate(180deg);
+}
