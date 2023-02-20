@@ -1,4 +1,4 @@
-export const getStatus = async (getVotingHandler, contractAddress) => {
+export const getWorkflowStatus = async (getVotingHandler, contractAddress) => {
   const workflowStatus = [
     "Registering Voters",
     "Proposals Registration Started",
