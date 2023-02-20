@@ -143,22 +143,23 @@ const VotingSessionCardsList = ({ role, reloadList }) => {
   const getInstances = async () => {
     // If "Non Voter" is selected
     if (role == 2) {
+      if (!instancesListContract) return;
       getInstancesAsNonVoter();
       return;
-    }
+    } else {
+      if (!votingFactoryContract) return;
 
-    if (!votingFactoryContract) return;
+      // If "Administrator" is selected
+      if (role == 0) {
+        getInstancesAsAdministrator();
+        return;
+      }
 
-    // If "Administrator" is selected
-    if (role == 0) {
-      getInstancesAsAdministrator();
-      return;
-    }
-
-    // If "Voter" is selected
-    if (role == 1) {
-      getInstancesAsVoter();
-      return;
+      // If "Voter" is selected
+      if (role == 1) {
+        getInstancesAsVoter();
+        return;
+      }
     }
   };
 
@@ -172,6 +173,7 @@ const VotingSessionCardsList = ({ role, reloadList }) => {
         {instances.map((instance) => (
           <VotingSessionCard
             key={instance.contract}
+            role={role}
             contractAddress={instance.contract}
             instanceName={instance.contractName}
             updateInstancesList={updateInstancesList}

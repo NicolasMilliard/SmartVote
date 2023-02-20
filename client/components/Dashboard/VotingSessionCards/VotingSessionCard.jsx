@@ -6,11 +6,12 @@ import ButtonDelete from "../../Buttons/ButtonDelete";
 
 import { useSmartVote } from "../../../context";
 
-import { getStatus } from "../../../utils/instance/getStatus";
+import { getWorkflowStatus } from "../../../utils/instance/getWorkflowStatus";
 import { getTotalVoters } from "../../../utils/instance/getTotalVoters";
 import { getTotalProposals } from "../../../utils/instance/getTotalProposals";
 
 const VotingSessionCard = ({
+  role,
   contractAddress,
   instanceName,
   updateInstancesList,
@@ -25,7 +26,7 @@ const VotingSessionCard = ({
 
   // Get current status of the instance
   const handleStatus = async () => {
-    setStatus(await getStatus(getVotingHandler, contractAddress));
+    setStatus(await getWorkflowStatus(getVotingHandler, contractAddress));
   };
 
   // Get total voters
@@ -86,18 +87,57 @@ const VotingSessionCard = ({
           have been added so far.
         </div>
         <div className="flex gap-10 mt-8">
-          <ButtonDelete text="Delete session" customFunction={togglePopUp} />
-          <Link
-            href={`/session/${contractAddress}`}
-            className="flex items-center bg-black text-white font-bold py-4 px-6 rounded hover:bg-white hover:text-black outline hover:outline-black hover:outline-2 manage-button"
-          >
-            Manage
-            <span className="ml-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="manage-icon">
-                <path d="M1.815.317 8.93 7.409a.736.736 0 0 1 .179.274A.928.928 0 0 1 9.16 8a.928.928 0 0 1-.053.317.736.736 0 0 1-.18.274l-7.113 7.114a1.002 1.002 0 0 1-.738.295 1.03 1.03 0 0 1-.76-.317A1.013 1.013 0 0 1 0 14.945c0-.282.106-.528.317-.74L6.522 8 .317 1.794a.99.99 0 0 1-.296-.728c0-.288.106-.538.317-.75a1.018 1.018 0 0 1 1.477.001Z" />
-              </svg>
-            </span>
-          </Link>
+          {/* If user is the administrator */}
+          {role === 0 && (
+            <>
+              <ButtonDelete
+                text="Delete session"
+                customFunction={togglePopUp}
+              />
+              <Link
+                href={`/session/${contractAddress}`}
+                className="flex items-center bg-black text-white font-bold py-4 px-6 rounded hover:bg-white hover:text-black outline hover:outline-black hover:outline-2 manage-button"
+              >
+                Manage
+                <span className="ml-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="manage-icon"
+                  >
+                    <path d="M1.815.317 8.93 7.409a.736.736 0 0 1 .179.274A.928.928 0 0 1 9.16 8a.928.928 0 0 1-.053.317.736.736 0 0 1-.18.274l-7.113 7.114a1.002 1.002 0 0 1-.738.295 1.03 1.03 0 0 1-.76-.317A1.013 1.013 0 0 1 0 14.945c0-.282.106-.528.317-.74L6.522 8 .317 1.794a.99.99 0 0 1-.296-.728c0-.288.106-.538.317-.75a1.018 1.018 0 0 1 1.477.001Z" />
+                  </svg>
+                </span>
+              </Link>
+            </>
+          )}
+          {/* If user is a voter */}
+          {role === 1 && (
+            <Link
+              href={`/session/${contractAddress}`}
+              className="flex items-center bg-black text-white font-bold py-4 px-6 rounded hover:bg-white hover:text-black outline hover:outline-black hover:outline-2 manage-button"
+            >
+              Join
+              <span className="ml-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="manage-icon">
+                  <path d="M1.815.317 8.93 7.409a.736.736 0 0 1 .179.274A.928.928 0 0 1 9.16 8a.928.928 0 0 1-.053.317.736.736 0 0 1-.18.274l-7.113 7.114a1.002 1.002 0 0 1-.738.295 1.03 1.03 0 0 1-.76-.317A1.013 1.013 0 0 1 0 14.945c0-.282.106-.528.317-.74L6.522 8 .317 1.794a.99.99 0 0 1-.296-.728c0-.288.106-.538.317-.75a1.018 1.018 0 0 1 1.477.001Z" />
+                </svg>
+              </span>
+            </Link>
+          )}
+          {/* If user is a non voter */}
+          {role === 2 && (
+            <Link
+              href={`/session/${contractAddress}`}
+              className="flex items-center bg-black text-white font-bold py-4 px-6 rounded hover:bg-white hover:text-black outline hover:outline-black hover:outline-2 manage-button"
+            >
+              Watch
+              <span className="ml-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="manage-icon">
+                  <path d="M1.815.317 8.93 7.409a.736.736 0 0 1 .179.274A.928.928 0 0 1 9.16 8a.928.928 0 0 1-.053.317.736.736 0 0 1-.18.274l-7.113 7.114a1.002 1.002 0 0 1-.738.295 1.03 1.03 0 0 1-.76-.317A1.013 1.013 0 0 1 0 14.945c0-.282.106-.528.317-.74L6.522 8 .317 1.794a.99.99 0 0 1-.296-.728c0-.288.106-.538.317-.75a1.018 1.018 0 0 1 1.477.001Z" />
+                </svg>
+              </span>
+            </Link>
+          )}
         </div>
       </div>
     </>
