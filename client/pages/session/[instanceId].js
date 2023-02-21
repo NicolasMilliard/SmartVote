@@ -14,7 +14,7 @@ import ButtonDelete from "../../components/Buttons/ButtonDelete";
 import InstanceDeleted from "../../components/Instance/InstanceDeleted";
 import WorkflowStatus from "../../components/Instance/WorkflowStatus";
 import InstanceName from "../../components/Instance/InstanceName";
-import AddVoter from "../../components/Instance/AddVoter";
+import AddVoter from "../../components/Instance/RegisteringVoters/AddVoter";
 
 const Instance = () => {
   const router = useRouter();
@@ -91,12 +91,15 @@ const Instance = () => {
               <div>
                 <WorkflowStatus active={workflowStatus} />
               </div>
-              <div className="flex-col">
+              <div className="flex-col items-center">
                 <InstanceName
                   instanceName={instanceName}
                   contractAddress={instanceId}
                 />
-                <AddVoter />
+                <AddVoter
+                  getVotingHandler={getVotingHandler}
+                  contractAddress={instanceId}
+                />
               </div>
             </section>
           </>
