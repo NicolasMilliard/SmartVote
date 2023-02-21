@@ -13,7 +13,9 @@ const InstanceName = ({ instanceName, contractAddress }) => {
     }
   }, [instanceName, contractAddress]);
 
-  return <h1 className="text-2xl font-semibold">{currentName}</h1>;
+  return (
+    <h1 className="text-2xl font-semibold text-center mb-16">{currentName}</h1>
+  );
 };
 
 export default InstanceName;
