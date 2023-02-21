@@ -13,18 +13,6 @@ const ButtonLoader = ({ theme }) => {
             </span>
           </div>
         );
-      case "half":
-        return (
-          <div className="bg-gray-900 text-white font-bold py-4 px-6 rounded-tr rounded-br cursor-not-allowed">
-            <span className="flex items-center">
-              <span
-                className="btn-spin-loader"
-                style={{ borderTopColor: "#5c5b63" }}
-              ></span>
-              Loading...
-            </span>
-          </div>
-        );
       default:
         return (
           <div className="bg-gray-900 text-white font-bold py-4 px-6 rounded cursor-not-allowed">
