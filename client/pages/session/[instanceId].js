@@ -15,6 +15,7 @@ import InstanceDeleted from "../../components/Instance/InstanceDeleted";
 import WorkflowStatus from "../../components/Instance/WorkflowStatus";
 import InstanceName from "../../components/Instance/InstanceName";
 import AddVoter from "../../components/Instance/RegisteringVoters/AddVoter";
+import VoterCanAddProposals from "../../components/Instance/RegisteringVoters/VoterCanAddProposals";
 
 const Instance = () => {
   const router = useRouter();
@@ -88,15 +89,21 @@ const Instance = () => {
               />
             </div>
             <section className="sm:flex gap-16">
+              {/* Workflow status */}
               <div>
                 <WorkflowStatus active={workflowStatus} />
               </div>
+              {/* Form */}
               <div className="flex-col items-center">
                 <InstanceName
                   instanceName={instanceName}
                   contractAddress={instanceId}
                 />
                 <AddVoter
+                  getVotingHandler={getVotingHandler}
+                  contractAddress={instanceId}
+                />
+                <VoterCanAddProposals
                   getVotingHandler={getVotingHandler}
                   contractAddress={instanceId}
                 />
