@@ -4,7 +4,7 @@ import ConnectWallet from "../../Buttons/ConnectWallet";
 
 const Menu = ({ isInstance }) => {
   return (
-    <menu
+    <nav
       className="py-6 md:py-9 w-full"
       style={{ boxShadow: "inset 0px 0px 16px rgba(5, 5, 7, 0.1)" }}
     >
@@ -28,7 +28,7 @@ const Menu = ({ isInstance }) => {
         </div>
         <ConnectWallet />
       </div>
-    </menu>
+    </nav>
   );
 };
 
