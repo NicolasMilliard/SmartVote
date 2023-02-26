@@ -33,7 +33,7 @@ VotingFactory
 VotingHandler
     Test initialize
       ✔ should set owner address during initialize (POV owner)
-      ✔ should revert: try to init a second time (POV owner) (43ms)
+      ✔ should revert: try to init a second time (POV owner)
     Remove instance
       ✔ should pause the instance (POV owner)
       ✔ should revert (POV voter1)
@@ -51,7 +51,7 @@ VotingHandler
       ✔ should revert: votingStatus is not RegisteringVoters (POV owner)
       ✔ should revert: voter1 is already registered (POV owner)
     Batch authorize
-      ✔ should authorize voter1 and voter2 as voters (POV owner) (44ms)
+      ✔ should authorize voter1 and voter2 as voters (POV owner) (38ms)
       ✔ should revert (POV voter1)
       ✔ should revert: instance is paused (POV owner)
       ✔ should revert: votingStatus is not RegisteringVoters (POV owner)
@@ -62,54 +62,44 @@ VotingHandler
       ✔ should revert: instance is paused (POV owner)
       ✔ should revert: votingStatus is not RegisteringVoters (POV owner)
     Start proposals registration
-      ✔ should update workflow to ProposalsRegistrationStarted
+      ✔ should update workflow to ProposalsRegistration
       ✔ should revert (POV voter1)
       ✔ should revert: instance is paused (POV owner)
-      ✔ should revert: workflow status is already ProposalsRegistrationStarted (POV owner)
+      ✔ should revert: workflow status is already ProposalsRegistration (POV owner)
     Register a proposal
       ✔ should register a proposal (POV owner)
       ✔ should register a proposal (POV voter1)
       ✔ should revert: caller is not a voter (POV nonVoter)
       ✔ should revert: instance is paused (POV owner)
-      ✔ should revert: workflow status is already ProposalsRegistrationStarted (POV owner)
+      ✔ should revert: workflow status is already ProposalsRegistration (POV owner)
       ✔ should revert: voters can not add proposals (POV voter1)
       ✔ should revert: proposal already submitted (POV owner)
-    End proposals registration
-      ✔ should update workflow to ProposalsRegistrationEnded
-      ✔ should revert (POV voter1)
-      ✔ should revert: instance is paused (POV owner)
-      ✔ should revert: workflow status is already ProposalsRegistrationEnded (POV owner)
     Display all Proposals
       ✔ should return all proposals details (POV voter1 - Single proposal)
       ✔ should return all proposals details (POV voter1 - Multiple proposals)
       ✔ should revert: caller is not a voter (POV nonVoter)
       ✔ should revert: instance is paused (POV voter1)
     Start voting session
-      ✔ should update workflow to VotingSessionStarted
+      ✔ should update workflow to VotingSession
       ✔ should revert (POV voter1)
       ✔ should revert: instance is paused (POV owner)
-      ✔ should revert: workflow status is already ProposalsRegistrationEnded (POV owner)
+      ✔ should revert: workflow status is already startVotingSession (POV owner)
     Vote
       ✔ should vote for a proposal
       ✔ should revert: caller is not a voter (POV nonVoter)
       ✔ should revert: already paused (POV owner)
-      ✔ should revert: workflow status is not VotingSessionStarted (POV owner)
+      ✔ should revert: workflow status is not VotingSession (POV owner)
       ✔ should revert: voter has already voted once (POV voter1)
-    End voting session
-      ✔ should update workflow to VotingSessionEnded
-      ✔ should revert (POV voter1)
-      ✔ should revert: instance is paused (POV owner)
-      ✔ should revert: workflow status is already VotingSessionEnded (POV owner)
     Start tally session
       ✔ should update workflow to VotesTallied
       ✔ should revert (POV voter1)
       ✔ should revert: instance is paused (POV owner)
-      ✔ should revert: workflow status is already VotingSessionEnded (POV owner)
+      ✔ should revert: workflow status is already startTallySession (POV owner)
     Tally votes
       ✔ should get winner (POV owner)
-      ✔ should detect an equality and store the proposals concerned (POV owner) (51ms)
-      ✔ should start a second tour (POV owner) (42ms)
-      ✔ should get winner after a second tour (POV owner) (81ms)
+      ✔ should detect an equality and store the proposals concerned (POV owner) (43ms)
+      ✔ should start a second tour (POV owner) (39ms)
+      ✔ should get winner after a second tour (POV owner) (75ms)
       ✔ should revert (POV voter1)
       ✔ should revert: instance is paused (POV owner)
       ✔ should revert: workflow status is not VotesTallied (POV owner)
@@ -207,12 +197,12 @@ InstancesList
 --------------------|----------|----------|----------|----------|----------------|
 File                |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
 --------------------|----------|----------|----------|----------|----------------|
- contracts\         |      100 |    98.44 |      100 |      100 |                |
+ contracts\         |      100 |    98.28 |      100 |      100 |                |
   InstancesList.sol |      100 |      100 |      100 |      100 |                |
   VotingFactory.sol |      100 |      100 |      100 |      100 |                |
-  VotingHandler.sol |      100 |    98.25 |      100 |      100 |                |
+  VotingHandler.sol |      100 |    98.04 |      100 |      100 |                |
 --------------------|----------|----------|----------|----------|----------------|
-All files           |      100 |    98.44 |      100 |      100 |                |
+All files           |      100 |    98.28 |      100 |      100 |                |
 --------------------|----------|----------|----------|----------|----------------|
 ```
 

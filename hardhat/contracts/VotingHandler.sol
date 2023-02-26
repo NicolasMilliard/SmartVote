@@ -34,7 +34,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     Proposal[] equalProposals;
 
     /// @notice Store the current workflow status
-    enum WorkflowStatus { RegisteringVoters, ProposalsRegistrationStarted, ProposalsRegistrationEnded, VotingSessionStarted, VotingSessionEnded, VotesTallied }
+    enum WorkflowStatus { RegisteringVoters, ProposalsRegistration, VotingSession, VotesTallied }
     WorkflowStatus public votingStatus;
 
     /// @dev Store voter's details
@@ -189,7 +189,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
      */
     function startProposalsRegistration() external onlyOwner whenNotPaused {
         require(votingStatus == WorkflowStatus.RegisteringVoters, "0x06");
-        updateWorkflow(WorkflowStatus.ProposalsRegistrationStarted);
+        updateWorkflow(WorkflowStatus.ProposalsRegistration);
     }
 
     /**
@@ -200,7 +200,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
      * @param _description is necessary to check if the proposal has already been register
      */
     function registerProposal(string calldata _description) external checkVoter whenNotPaused {
-        require(votingStatus == WorkflowStatus.ProposalsRegistrationStarted, "0x07");
+        require(votingStatus == WorkflowStatus.ProposalsRegistration, "0x07");
 
         // If msg.sender is not the owner, we check votersCanAddProposals
         if(msg.sender != owner()) {
@@ -218,15 +218,6 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     }
 
     /**
-     * @notice Administrator ends proposals registration session
-     * @dev Only the owner of the contract can call this function when the contract is not paused
-     */
-    function endProposalsRegistration() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.ProposalsRegistrationStarted, "0x09");
-        updateWorkflow(WorkflowStatus.ProposalsRegistrationEnded);
-    }
-
-    /**
      * @notice Display all proposals for all voters
      * @dev Only voters can call this function
      * @return Proposal[] which contains description and voteCount for each proposal
@@ -240,8 +231,8 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
      * @dev Only the owner of the contract can call this function when the contract is not paused
      */
     function startVotingSession() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.ProposalsRegistrationEnded, "0x10");
-        updateWorkflow(WorkflowStatus.VotingSessionStarted);
+        require(votingStatus == WorkflowStatus.ProposalsRegistration, "0x10");
+        updateWorkflow(WorkflowStatus.VotingSession);
     }
 
     /**
@@ -251,7 +242,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
      * @param _proposalId is the id of the proposal selected by the Voter
      */
     function vote(uint _proposalId) external checkVoter whenNotPaused {
-        require(votingStatus == WorkflowStatus.VotingSessionStarted, "0x11");
+        require(votingStatus == WorkflowStatus.VotingSession, "0x11");
         require(!voters[msg.sender].hasVoted, "0x12");
 
         voters[msg.sender].hasVoted = true;
@@ -264,20 +255,11 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     }
 
     /**
-     * @notice Administrator ends voting session
-     * @dev Only the owner of the contract can call this function when the contract is not paused
-     */
-    function endVotingSession() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.VotingSessionStarted, "0x13");
-        updateWorkflow(WorkflowStatus.VotingSessionEnded);
-    }
-
-    /**
      * @notice Administrator starts tally session
      * @dev Only the owner of the contract can call this function when the contract is not paused
      */
     function startTallySession() external onlyOwner whenNotPaused {
-        require(votingStatus == WorkflowStatus.VotingSessionEnded, "0x14");
+        require(votingStatus == WorkflowStatus.VotingSession, "0x14");
         updateWorkflow(WorkflowStatus.VotesTallied);
     }
 
@@ -328,7 +310,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
             }
 
             // Restart voting session with equal proposals         
-            updateWorkflow(WorkflowStatus.VotingSessionStarted);
+            updateWorkflow(WorkflowStatus.VotingSession);
         }
     }
 
