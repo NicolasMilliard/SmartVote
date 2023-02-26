@@ -10,12 +10,15 @@ import { getInstanceName } from "../../utils/instance/getInstanceName";
 import Menu from "../../components/Layout/Menu/Menu";
 import Role from "../../components/Instance/Role";
 import VotingSessionDeletePopUp from "../../components/Dashboard/VotingSessionCards/VotingSessionDeletePopUp";
+import Button from "../../components/Buttons/Button";
+import ButtonLoader from "../../components/Buttons/ButtonLoader";
 import ButtonDelete from "../../components/Buttons/ButtonDelete";
 import InstanceDeleted from "../../components/Instance/InstanceDeleted";
 import WorkflowStatus from "../../components/Instance/WorkflowStatus";
 import InstanceName from "../../components/Instance/InstanceName";
 import AddVoter from "../../components/Instance/RegisteringVoters/AddVoter";
 import VoterCanAddProposals from "../../components/Instance/RegisteringVoters/VoterCanAddProposals";
+import VotersList from "../../components/Instance/RegisteringVoters/VotersList";
 
 const Instance = () => {
   const router = useRouter();
@@ -24,6 +27,7 @@ const Instance = () => {
   const [workflowStatus, setWorkflowStatus] = useState(0);
   const [instanceName, setInstanceName] = useState("");
   const [deleteInstancePopUp, setDeleteInstancePopUp] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const {
     state: { getVotingHandler },
   } = useSmartVote();
@@ -59,6 +63,23 @@ const Instance = () => {
   // Toggle pop-up
   const togglePopUp = () => {
     setDeleteInstancePopUp(!deleteInstancePopUp);
+  };
+
+  // Start Proposal Registering
+  const startProposalsRegistering = async () => {
+    try {
+      if (!getVotingHandler) return;
+      setIsLoading(true);
+
+      const tx = await getVotingHandler(
+        instanceId
+      ).startProposalsRegistration();
+      await tx;
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
   };
 
   return (
@@ -107,6 +128,20 @@ const Instance = () => {
                   getVotingHandler={getVotingHandler}
                   contractAddress={instanceId}
                 />
+                <VotersList
+                  getVotingHandler={getVotingHandler}
+                  contractAddress={instanceId}
+                />
+                <div className="flex flex-col items-center mt-16">
+                  {isLoading ? (
+                    <ButtonLoader />
+                  ) : (
+                    <Button
+                      text="Start Proposals Registering"
+                      customFunction={startProposalsRegistering}
+                    />
+                  )}
+                </div>
               </div>
             </section>
           </>
