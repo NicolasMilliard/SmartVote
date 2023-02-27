@@ -34,7 +34,7 @@ const VotersList = ({ getVotingHandler, contractAddress }) => {
     getVotersList();
   }, [getVotingHandler, contractAddress]);
   return (
-    <div className="bg-white mt-10 px-8 py-6 shadow rounded">
+    <div className="bg-white mt-10 px-8 py-6 w-full max-w-md shadow rounded">
       <h3 className="font-semibold text-xl mb-6">Voters addresses:</h3>
       <ul className="flex flex-col gap-4 text-gray-900">
         {voters.map((voter) => (
