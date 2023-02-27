@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import { votersCanAddProposals } from "../../../utils/instance/RegisteringVoters/voterCanAddProposals";
+
 const VoterCanAddProposals = ({ getVotingHandler, contractAddress }) => {
   const [allowed, setAllowed] = useState(false);
 
@@ -33,23 +35,16 @@ const VoterCanAddProposals = ({ getVotingHandler, contractAddress }) => {
 
   // Call authorizeVotersToAddProposals onClick
   const updateAllowedStatus = async () => {
-    try {
-      // Update checked status
-      setAllowed(!allowed);
-
-      const tx = await getVotingHandler(
-        contractAddress
-      ).authorizeVotersToAddProposals(!allowed);
-      await tx;
-    } catch (error) {
-      // Reset checked status
-      setAllowed(!allowed);
-      console.log(error);
-    }
+    votersCanAddProposals(
+      getVotingHandler,
+      contractAddress,
+      setAllowed,
+      allowed
+    );
   };
 
   return (
-    <div className="flex items-center justify-center mt-10">
+    <div className="flex items-center mt-10">
       <span className="mr-6">Allow voters to add proposals</span>
       <label className="switch w-20 h-10">
         <input
