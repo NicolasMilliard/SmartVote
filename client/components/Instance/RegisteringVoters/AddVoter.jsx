@@ -3,8 +3,8 @@ import { useState } from "react";
 import Button from "../../Buttons/Button";
 import ButtonLoader from "../../Buttons/ButtonLoader";
 
-import { authorizeVoter } from "../../../utils/instance/authorizeVoter";
-import { batchAuthorizeVoters } from "../../../utils/instance/batchAuthorizeVoters";
+import { authorizeVoter } from "../../../utils/instance/RegisteringVoters/authorizeVoter";
+import { batchAuthorizeVoters } from "../../../utils/instance/RegisteringVoters/batchAuthorizeVoters";
 
 const AddVoter = ({ getVotingHandler, contractAddress }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -105,7 +105,7 @@ const AddVoter = ({ getVotingHandler, contractAddress }) => {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <>
       {/* Textarea Add voter */}
       <textarea
         placeholder="0x..."
@@ -127,7 +127,7 @@ const AddVoter = ({ getVotingHandler, contractAddress }) => {
       ) : (
         <Button text="Add voter" customFunction={addVoter} />
       )}
-    </div>
+    </>
   );
 };
 
