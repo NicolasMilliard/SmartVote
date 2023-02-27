@@ -190,3 +190,8 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+/* Proposals registration */
+.max-w-170 {
+  max-width: 680px;
+}
