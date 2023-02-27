@@ -1,10 +1,8 @@
 export const getWorkflowStatus = async (getVotingHandler, contractAddress) => {
   const workflowStatus = [
     "Registering Voters",
-    "Proposals Registration Started",
-    "Proposals Registration Ended",
-    "Voting Session Started",
-    "Voting Session Ended",
+    "Proposals Registration",
+    "Voting Session",
     "Votes Tallied",
   ];
 
