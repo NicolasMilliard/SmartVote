@@ -1,33 +1,12 @@
 import { useState, useEffect } from "react";
 
+import { getVoters } from "../../../utils/instance/RegisteringVoters/getVoters";
+
 const VotersList = ({ getVotingHandler, contractAddress }) => {
   const [voters, setVoters] = useState([]);
 
   const getVotersList = async () => {
-    try {
-      if (!getVotingHandler) return;
-
-      let allEvents = [];
-
-      const eventFilter =
-        getVotingHandler(contractAddress).filters.VoterRegistered();
-      const events = await getVotingHandler(contractAddress).queryFilter(
-        eventFilter,
-        0
-      );
-
-      // Loop through all addresses
-      for (let i = 0; i < events.length; i++) {
-        allEvents.push({
-          id: `Voter ${i + 1}`,
-          address: events[i].args[0],
-        });
-      }
-
-      setVoters(allEvents);
-    } catch (error) {
-      console.log(error);
-    }
+    setVoters(await getVoters(getVotingHandler, contractAddress));
   };
 
   useEffect(() => {
