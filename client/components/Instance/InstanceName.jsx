@@ -14,7 +14,9 @@ const InstanceName = ({ instanceName, contractAddress }) => {
   }, [instanceName, contractAddress]);
 
   return (
-    <h1 className="text-2xl font-semibold text-center mb-16">{currentName}</h1>
+    <h1 className="text-2xl font-semibold text-center mb-16">
+      {contractAddress}
+    </h1>
   );
 };
 
