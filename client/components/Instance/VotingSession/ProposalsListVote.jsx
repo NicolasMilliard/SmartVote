@@ -47,7 +47,7 @@ const ProposalsListVote = ({ getVotingHandler, contractAddress }) => {
   };
 
   return (
-    <div className="mt-10 w-full max-w-170">
+    <div className="w-full max-w-170">
       <form>
         <div className="bg-white px-8 py-6 shadow rounded">
           <h3 className="font-semibold text-xl mb-6">Proposals list:</h3>
