@@ -1,28 +1,12 @@
 import { useState, useEffect } from "react";
 
+import { getProposals } from "../../../utils/instance/ProposalsRegistration/getProposals";
+
 const ProposalsList = ({ getVotingHandler, contractAddress }) => {
   const [proposals, setProposals] = useState([]);
 
   const getProposalsList = async () => {
-    try {
-      if (!getVotingHandler) return;
-
-      let allProposals = [];
-
-      const contract = getVotingHandler(contractAddress);
-      const tx = await contract.displayProposals();
-
-      // Loop through all proposals
-      for (let i = 0; i < tx.length; i++) {
-        allProposals.push({
-          id: i,
-          description: tx[i][0],
-        });
-      }
-      setProposals(allProposals);
-    } catch (error) {
-      console.log(error);
-    }
+    setProposals(getProposals(getVotingHandler, contractAddress));
   };
 
   useEffect(() => {
