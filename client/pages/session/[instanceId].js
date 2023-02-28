@@ -17,6 +17,7 @@ import InstanceName from "../../components/Instance/InstanceName";
 import RegisteringVoters from "../../components/Instance/RegisteringVoters/RegisteringVoters";
 import ProposalsRegistration from "../../components/Instance/ProposalsRegistration/ProposalsRegistration";
 import VotingSession from "../../components/Instance/VotingSession/VotingSession";
+import VotesTallied from "../../components/Instance/VotesTallied/VotesTallied";
 
 const Instance = () => {
   const router = useRouter();
@@ -115,6 +116,12 @@ const Instance = () => {
                 )}
                 {workflowStatus == "Voting Session" && (
                   <VotingSession
+                    getVotingHandler={getVotingHandler}
+                    contractAddress={instanceId}
+                  />
+                )}
+                {workflowStatus == "Votes Tallied" && (
+                  <VotesTallied
                     getVotingHandler={getVotingHandler}
                     contractAddress={instanceId}
                   />
