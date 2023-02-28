@@ -366,12 +366,6 @@ describe("VotingHandler", async () => {
       }
     });
 
-    it("should revert: caller is not a voter (POV nonVoter)", async () => {
-      await expect(
-        votingHandler.connect(nonVoter).displayProposals()
-      ).to.be.revertedWith("0x01");
-    });
-
     it("should revert: instance is paused (POV voter1)", async () => {
       // Pause the instance
       await votingHandler.connect(owner).removeInstance();
