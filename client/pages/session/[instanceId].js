@@ -16,6 +16,7 @@ import WorkflowStatus from "../../components/Instance/WorkflowStatus";
 import InstanceName from "../../components/Instance/InstanceName";
 import RegisteringVoters from "../../components/Instance/RegisteringVoters/RegisteringVoters";
 import ProposalsRegistration from "../../components/Instance/ProposalsRegistration/ProposalsRegistration";
+import VotingSession from "../../components/Instance/VotingSession/VotingSession";
 
 const Instance = () => {
   const router = useRouter();
@@ -99,7 +100,7 @@ const Instance = () => {
                   instanceName={instanceName}
                   contractAddress={instanceId}
                 />
-                {/* Dashboard relative to WorkflowStatus */}
+                {/* Dashboard sections relative to WorkflowStatus */}
                 {workflowStatus == "Registering Voters" && (
                   <RegisteringVoters
                     getVotingHandler={getVotingHandler}
@@ -108,6 +109,12 @@ const Instance = () => {
                 )}
                 {workflowStatus == "Proposals Registration" && (
                   <ProposalsRegistration
+                    getVotingHandler={getVotingHandler}
+                    contractAddress={instanceId}
+                  />
+                )}
+                {workflowStatus == "Voting Session" && (
+                  <VotingSession
                     getVotingHandler={getVotingHandler}
                     contractAddress={instanceId}
                   />
