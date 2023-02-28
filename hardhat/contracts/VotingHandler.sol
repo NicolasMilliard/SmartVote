@@ -66,7 +66,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
      * @notice Emitted when a new voter is registered
      * @param voterAddress Address of the new voter
      */
-    event VoterRegistered(address indexed voterAddress);
+    event VoterRegistered(address voterAddress);
 
     /**
      * @notice Emitted when voters are allowed to add proposals
@@ -92,7 +92,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
      * @param voter Address of the voter
      * @param proposalId Id of the voted proposal
      */
-    event Voted(address voter, uint proposalId);
+    event Voted(address indexed voter, uint proposalId);
 
     /**
      * @notice Emitted in cas of an equality
@@ -219,10 +219,10 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
 
     /**
      * @notice Display all proposals for all voters
-     * @dev Only voters can call this function
+     * @dev Everyone can call this function
      * @return Proposal[] which contains description and voteCount for each proposal
      */
-    function displayProposals() external checkVoter whenNotPaused view returns(Proposal[] memory) {
+    function displayProposals() external whenNotPaused view returns(Proposal[] memory) {
         return allProposals;
     }
 
@@ -261,6 +261,9 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
     function startTallySession() external onlyOwner whenNotPaused {
         require(votingStatus == WorkflowStatus.VotingSession, "0x14");
         updateWorkflow(WorkflowStatus.VotesTallied);
+        
+        /// @dev Automatically tally votes
+        tallyVotes();
     }
 
     /** 
@@ -269,7 +272,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
      * @dev Call getHighestVoteCount function. Compare all voteCount of each proposals and store proposals with an equal voteCount in a new array (equalProposals)
      * @dev If there is no equality, winningProposalId is set
      */
-    function tallyVotes() external onlyOwner whenNotPaused {
+    function tallyVotes() private {
         require(votingStatus == WorkflowStatus.VotesTallied, "0x15");
         
         uint highestNumber = getHighestVoteCount();
@@ -351,7 +354,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
      * @dev Called by registerProposals. Revert if keccak256 of two descriptions are equal
      * @param _description is the description of a new proposal suggested by a Voter
      */
-    function checkProposals(string memory _description) private whenNotPaused view {
+    function checkProposals(string memory _description) private view {
         uint allProposalsLength = allProposals.length; 
         for(uint i; i < allProposalsLength;) {
             require(keccak256(abi.encode(_description)) != keccak256(abi.encode(allProposals[i].description)), "0x18");
@@ -364,7 +367,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
      * @dev Called by tallyVotes
      * @return highestNumber voteCount number for a proposal
      */
-    function getHighestVoteCount() private whenNotPaused view returns(uint highestNumber) {
+    function getHighestVoteCount() private view returns(uint highestNumber) {
         uint allProposalsLength = allProposals.length; 
         for(uint i; i < allProposalsLength;) {
             if(allProposals[i].voteCount > highestNumber) {
