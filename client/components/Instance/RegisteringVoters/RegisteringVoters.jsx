@@ -9,7 +9,7 @@ const RegisteringVoters = ({ getVotingHandler, contractAddress }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Start Proposal Registering
-  const startProposalsRegistering = async () => {
+  const startProposalsRegistration = async () => {
     try {
       if (!getVotingHandler) return;
       setIsLoading(true);
@@ -43,8 +43,8 @@ const RegisteringVoters = ({ getVotingHandler, contractAddress }) => {
           <ButtonLoader />
         ) : (
           <Button
-            text="Start Proposals Registering"
-            customFunction={startProposalsRegistering}
+            text="Start Proposals Registration"
+            customFunction={startProposalsRegistration}
           />
         )}
       </div>
