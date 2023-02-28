@@ -45,7 +45,7 @@ const AddProposal = ({ getVotingHandler, contractAddress }) => {
     }
   }, [proposalLength]);
   return (
-    <div className="flex flex-col items-center">
+    <>
       <div className="flex items-center justify-between w-full max-w-170 mb-4">
         <h3 className="font-semibold text-xl">Register a new proposal</h3>
         <div>
@@ -85,7 +85,7 @@ const AddProposal = ({ getVotingHandler, contractAddress }) => {
           )}
         </>
       )}
-    </div>
+    </>
   );
 };
 
