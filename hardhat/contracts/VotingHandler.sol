@@ -66,7 +66,7 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
      * @notice Emitted when a new voter is registered
      * @param voterAddress Address of the new voter
      */
-    event VoterRegistered(address voterAddress);
+    event VoterRegistered(address indexed voterAddress);
 
     /**
      * @notice Emitted when voters are allowed to add proposals
