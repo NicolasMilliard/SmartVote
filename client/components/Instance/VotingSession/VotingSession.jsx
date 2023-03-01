@@ -4,7 +4,7 @@ import VotersStatus from "./VotersStatus";
 import Button from "../../Buttons/Button";
 import ButtonLoader from "../../Buttons/ButtonLoader";
 
-const VotingSession = ({ getVotingHandler, contractAddress }) => {
+const VotingSession = ({ getVotingHandler, contractAddress, userRole }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Tally Votes
@@ -28,17 +28,22 @@ const VotingSession = ({ getVotingHandler, contractAddress }) => {
         getVotingHandler={getVotingHandler}
         contractAddress={contractAddress}
       />
-      <VotersStatus
-        getVotingHandler={getVotingHandler}
-        contractAddress={contractAddress}
-      />
-      <div className="flex flex-col items-center mt-16">
-        {isLoading ? (
-          <ButtonLoader />
-        ) : (
-          <Button text="Tally Votes" customFunction={tallyVotes} />
-        )}
-      </div>
+
+      {userRole == 0 && (
+        <>
+          <VotersStatus
+            getVotingHandler={getVotingHandler}
+            contractAddress={contractAddress}
+          />
+          <div className="flex flex-col items-center mt-16">
+            {isLoading ? (
+              <ButtonLoader />
+            ) : (
+              <Button text="Tally Votes" customFunction={tallyVotes} />
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

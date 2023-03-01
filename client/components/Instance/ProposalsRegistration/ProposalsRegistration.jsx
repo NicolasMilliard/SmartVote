@@ -4,7 +4,11 @@ import ButtonLoader from "../../../components/Buttons/ButtonLoader";
 import AddProposal from "./AddProposal";
 import ProposalsList from "./ProposalsList";
 
-const ProposalsRegistration = ({ getVotingHandler, contractAddress }) => {
+const ProposalsRegistration = ({
+  getVotingHandler,
+  contractAddress,
+  userRole,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Start Voting Session
@@ -32,16 +36,18 @@ const ProposalsRegistration = ({ getVotingHandler, contractAddress }) => {
         getVotingHandler={getVotingHandler}
         contractAddress={contractAddress}
       />
-      <div className="flex flex-col items-center mt-16">
-        {isLoading ? (
-          <ButtonLoader />
-        ) : (
-          <Button
-            text="Start Voting Session"
-            customFunction={startVotingSession}
-          />
-        )}
-      </div>
+      {userRole == 0 && (
+        <div className="flex flex-col items-center mt-16">
+          {isLoading ? (
+            <ButtonLoader />
+          ) : (
+            <Button
+              text="Start Voting Session"
+              customFunction={startVotingSession}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };
