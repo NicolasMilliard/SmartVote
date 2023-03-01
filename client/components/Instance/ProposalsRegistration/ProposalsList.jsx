@@ -6,7 +6,7 @@ const ProposalsList = ({ getVotingHandler, contractAddress }) => {
   const [proposals, setProposals] = useState([]);
 
   const getProposalsList = async () => {
-    setProposals(getProposals(getVotingHandler, contractAddress));
+    setProposals(await getProposals(getVotingHandler, contractAddress));
   };
 
   useEffect(() => {
