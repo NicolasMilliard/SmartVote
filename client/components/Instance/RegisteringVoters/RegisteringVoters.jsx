@@ -5,7 +5,12 @@ import AddVoter from "./AddVoter";
 import VoterCanAddProposals from "./VoterCanAddProposals";
 import VotersList from "./VotersList";
 
-const RegisteringVoters = ({ getVotingHandler, contractAddress }) => {
+const RegisteringVoters = ({
+  getVotingHandler,
+  contractAddress,
+  userRole,
+  userAddress,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Start Proposal Registering
@@ -26,28 +31,35 @@ const RegisteringVoters = ({ getVotingHandler, contractAddress }) => {
   };
   return (
     <div className="flex flex-col items-center">
-      <AddVoter
-        getVotingHandler={getVotingHandler}
-        contractAddress={contractAddress}
-      />
-      <VoterCanAddProposals
-        getVotingHandler={getVotingHandler}
-        contractAddress={contractAddress}
-      />
+      {userRole == 0 && (
+        <>
+          <AddVoter
+            getVotingHandler={getVotingHandler}
+            contractAddress={contractAddress}
+          />
+          <VoterCanAddProposals
+            getVotingHandler={getVotingHandler}
+            contractAddress={contractAddress}
+          />
+        </>
+      )}
       <VotersList
         getVotingHandler={getVotingHandler}
         contractAddress={contractAddress}
+        userAddress={userAddress}
       />
-      <div className="flex flex-col items-center mt-16">
-        {isLoading ? (
-          <ButtonLoader />
-        ) : (
-          <Button
-            text="Start Proposals Registration"
-            customFunction={startProposalsRegistration}
-          />
-        )}
-      </div>
+      {userRole == 0 && (
+        <div className="flex flex-col items-center mt-16">
+          {isLoading ? (
+            <ButtonLoader />
+          ) : (
+            <Button
+              text="Start Proposals Registration"
+              customFunction={startProposalsRegistration}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };
