@@ -194,12 +194,12 @@ contract VotingHandler is Initializable, OwnableUpgradeable, PausableUpgradeable
 
     /**
      * @notice Voters can register their proposal
-     * @dev Only voters can call this function
+     * @dev Everyone can call this function but only admin and allowed voters can add proposals
      * @dev checkProposals is called to check if this proposals wasn't already be added to allProposals array
      * @dev allProposals array is incremented at each new proposal so allProposals.length - 1 is equal to the index of the right proposal
      * @param _description is necessary to check if the proposal has already been register
      */
-    function registerProposal(string calldata _description) external checkVoter whenNotPaused {
+    function registerProposal(string calldata _description) external whenNotPaused {
         require(votingStatus == WorkflowStatus.ProposalsRegistration, "0x07");
 
         // If msg.sender is not the owner, we check votersCanAddProposals
