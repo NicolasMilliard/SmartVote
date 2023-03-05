@@ -15,7 +15,7 @@ const Instance = () => {
   const { instanceId } = router.query;
   const [instanceStatus, setInstanceStatus] = useState(false);
   const [workflowStatus, setWorkflowStatus] = useState(0);
-  const [userRole, setUserRole] = useState(3);
+  const [userRole, setUserRole] = useState(2);
   const [instanceName, setInstanceName] = useState("");
   const {
     state: { getVotingHandler },
