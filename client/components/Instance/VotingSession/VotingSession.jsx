@@ -24,11 +24,14 @@ const VotingSession = ({ getVotingHandler, contractAddress, userRole }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <ProposalsListVote
-        getVotingHandler={getVotingHandler}
-        contractAddress={contractAddress}
-      />
-
+      {/* Display proposals list and vote button for the voters */}
+      {userRole == 1 && (
+        <ProposalsListVote
+          getVotingHandler={getVotingHandler}
+          contractAddress={contractAddress}
+        />
+      )}
+      {/* Display the voters' list for the admin */}
       {userRole == 0 && (
         <>
           <VotersStatus
@@ -42,6 +45,19 @@ const VotingSession = ({ getVotingHandler, contractAddress, userRole }) => {
               <Button text="Tally Votes" customFunction={tallyVotes} />
             )}
           </div>
+        </>
+      )}
+      {/* Non voter get a feedback message */}
+      {userRole == 2 && (
+        <>
+          <p>
+            Unfortunately, you are not a voter. However, you can still follow
+            the progress of the voting session.
+          </p>
+          <p className="mt-16">
+            Voters are voting. The winning proposal will be available here when
+            the voting session will be ended.
+          </p>
         </>
       )}
     </div>

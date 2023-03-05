@@ -28,14 +28,22 @@ const ProposalsRegistration = ({
 
   return (
     <div className="flex flex-col items-center">
-      <AddProposal
-        getVotingHandler={getVotingHandler}
-        contractAddress={contractAddress}
-      />
-      <ProposalsList
-        getVotingHandler={getVotingHandler}
-        contractAddress={contractAddress}
-      />
+      {/* Display add proposal textarea for voters */}
+      {userRole == 1 && (
+        <AddProposal
+          getVotingHandler={getVotingHandler}
+          contractAddress={contractAddress}
+        />
+      )}
+
+      {/* Voters and admin can display proposals' list */}
+      {(userRole == 0 || userRole == 1) && (
+        <ProposalsList
+          getVotingHandler={getVotingHandler}
+          contractAddress={contractAddress}
+        />
+      )}
+      {/* Admin can skip to the next step */}
       {userRole == 0 && (
         <div className="flex flex-col items-center mt-16">
           {isLoading ? (
@@ -47,6 +55,19 @@ const ProposalsRegistration = ({
             />
           )}
         </div>
+      )}
+      {/* Non voter get a feedback message */}
+      {userRole == 2 && (
+        <>
+          <p>
+            Unfortunately, you are not a voter. However, you can still follow
+            the progress of the voting session.
+          </p>
+          <p className="mt-16">
+            Voters are registering proposals. The winning proposal will be
+            available here when the voting session will be ended.
+          </p>
+        </>
       )}
     </div>
   );

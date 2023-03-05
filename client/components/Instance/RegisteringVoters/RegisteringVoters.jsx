@@ -4,6 +4,7 @@ import ButtonLoader from "../../../components/Buttons/ButtonLoader";
 import AddVoter from "./AddVoter";
 import VoterCanAddProposals from "./VoterCanAddProposals";
 import VotersList from "./VotersList";
+import InstanceRoleMessage from "../InstanceController/InstanceRoleMessage";
 
 const RegisteringVoters = ({
   getVotingHandler,
@@ -31,6 +32,12 @@ const RegisteringVoters = ({
   };
   return (
     <div className="flex flex-col items-center">
+      {/* User role feedback */}
+      {(userRole == 1 || userRole == 2) && (
+        <InstanceRoleMessage role={userRole} />
+      )}
+
+      {/* If user is an administrator */}
       {userRole == 0 && (
         <>
           <AddVoter
@@ -43,11 +50,13 @@ const RegisteringVoters = ({
           />
         </>
       )}
+      {/* Display the voters' list */}
       <VotersList
         getVotingHandler={getVotingHandler}
         contractAddress={contractAddress}
         userAddress={userAddress}
       />
+      {/* If the user is an admin, display a button to skip to the next step */}
       {userRole == 0 && (
         <div className="flex flex-col items-center mt-16">
           {isLoading ? (
@@ -59,6 +68,13 @@ const RegisteringVoters = ({
             />
           )}
         </div>
+      )}
+      {/* Give a feedback for the next step to the users */}
+      {(userRole == 1 || userRole == 2) && (
+        <p className="mt-16">
+          Administrator must update the status of the voting session to
+          continue.
+        </p>
       )}
     </div>
   );
