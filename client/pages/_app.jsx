@@ -6,11 +6,13 @@ import {
 import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { localhost, polygonMumbai } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
+import { ToastContainer } from "react-toastify";
 
 import Layout from "../components/Layout/Layout";
 import { SmartVoteProvider } from "../context";
 
 import "@rainbow-me/rainbowkit/styles.css";
+import "react-toastify/dist/ReactToastify.css";
 import "../styles/global.css";
 
 const { chains, provider } = configureChains(
@@ -73,6 +75,7 @@ const App = ({ Component, pageProps }) => {
             <Component {...pageProps} />
           </Layout>
         </SmartVoteProvider>
+        <ToastContainer />
       </RainbowKitProvider>
     </WagmiConfig>
   );
