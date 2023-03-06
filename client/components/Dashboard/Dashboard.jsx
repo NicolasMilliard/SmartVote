@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 import Menu from "../Layout/Menu/Menu";
 import VotingSessionCardsList from "./VotingSessionCards/VotingSessionCardsList";
@@ -36,11 +37,24 @@ const Dashboard = () => {
       const tx = await votingFactoryContract.b_A6Q();
       await tx.wait();
 
+      toast.success("Congrats! Your voting session has been created.", {
+        position: "top-right",
+        autoClose: 5000,
+        closeOnClick: true,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+      });
       setIsLoading(false);
       setIsUpdated(true);
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
+      toast.error("Transaction failed, please try again.", {
+        position: "top-right",
+        autoClose: 5000,
+        closeOnClick: true,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+      });
     }
   };
 

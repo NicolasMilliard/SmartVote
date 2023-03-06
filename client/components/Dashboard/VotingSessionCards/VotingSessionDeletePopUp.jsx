@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 import Button from "../../Buttons/Button";
 import ButtonLoader from "../../Buttons/ButtonLoader";
@@ -27,8 +28,18 @@ const VotingSessionDeletePopUp = ({
       const contract = await getVotingHandler(contractAddress);
 
       const tx = await contract.removeInstance();
-      await tx.wait();
 
+      // Wait for the transaction to be mined
+      const provider = getVotingHandler(contractAddress).provider;
+      await provider.waitForTransaction(tx.hash);
+
+      toast.success("Your voting session has been deleted.", {
+        position: "top-right",
+        autoClose: 5000,
+        closeOnClick: true,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+      });
       // Toggle pop-up
       togglePopUp();
       setIsLoading(false);
@@ -37,7 +48,6 @@ const VotingSessionDeletePopUp = ({
       updateInstancesList();
     } catch (error) {
       setIsLoading(false);
-      console.log(error);
     }
   };
   return (

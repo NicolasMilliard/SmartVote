@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 import Button from "../../Buttons/Button";
 import ButtonLoader from "../../Buttons/ButtonLoader";
@@ -98,9 +99,14 @@ const AddVoter = ({ getVotingHandler, contractAddress }) => {
         multipleAddresses,
         setIsLoading
       );
-      setIsLoading(false);
     } else {
-      console.log("no value");
+      toast.error("Please enter at least one address.", {
+        position: "top-right",
+        autoClose: 5000,
+        closeOnClick: true,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+      });
     }
   };
 
