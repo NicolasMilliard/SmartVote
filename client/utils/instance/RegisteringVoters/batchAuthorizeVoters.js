@@ -4,7 +4,8 @@ export const batchAuthorizeVoters = async (
   getVotingHandler,
   contractAddress,
   votersAddresses,
-  setIsLoading
+  setIsLoading,
+  updateVotersList
 ) => {
   try {
     if (!getVotingHandler) return;
@@ -24,6 +25,8 @@ export const batchAuthorizeVoters = async (
       pauseOnFocusLoss: true,
       pauseOnHover: true,
     });
+
+    updateVotersList();
 
     setIsLoading(false);
   } catch (error) {

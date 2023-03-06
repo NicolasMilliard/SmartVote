@@ -7,7 +7,7 @@ import ButtonLoader from "../../Buttons/ButtonLoader";
 import { authorizeVoter } from "../../../utils/instance/RegisteringVoters/authorizeVoter";
 import { batchAuthorizeVoters } from "../../../utils/instance/RegisteringVoters/batchAuthorizeVoters";
 
-const AddVoter = ({ getVotingHandler, contractAddress }) => {
+const AddVoter = ({ getVotingHandler, contractAddress, updateVotersList }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [textareaRows, setTextareaRows] = useState(0);
   const [textareaError, setTextareaError] = useState("");
@@ -89,7 +89,8 @@ const AddVoter = ({ getVotingHandler, contractAddress }) => {
         getVotingHandler,
         contractAddress,
         singleAddress,
-        setIsLoading
+        setIsLoading,
+        updateVotersList
       );
     } else if (multipleAddresses.length > 0) {
       setIsLoading(true);
@@ -97,7 +98,8 @@ const AddVoter = ({ getVotingHandler, contractAddress }) => {
         getVotingHandler,
         contractAddress,
         multipleAddresses,
-        setIsLoading
+        setIsLoading,
+        updateVotersList
       );
     } else {
       toast.error("Please enter at least one address.", {

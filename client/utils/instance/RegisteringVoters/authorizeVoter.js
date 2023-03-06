@@ -4,7 +4,8 @@ export const authorizeVoter = async (
   getVotingHandler,
   contractAddress,
   voterAddress,
-  setIsLoading
+  setIsLoading,
+  updateVotersList
 ) => {
   try {
     if (!getVotingHandler) return;
@@ -24,6 +25,8 @@ export const authorizeVoter = async (
       pauseOnFocusLoss: true,
       pauseOnHover: true,
     });
+
+    updateVotersList();
 
     setIsLoading(false);
   } catch (error) {

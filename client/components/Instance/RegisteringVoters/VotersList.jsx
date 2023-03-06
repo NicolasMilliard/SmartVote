@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 
 import { getVoters } from "../../../utils/instance/RegisteringVoters/getVoters";
 
-const VotersList = ({ getVotingHandler, contractAddress, userAddress }) => {
+const VotersList = ({
+  getVotingHandler,
+  contractAddress,
+  userAddress,
+  updateVotersList,
+}) => {
   const [voters, setVoters] = useState([]);
 
   const getVotersList = async () => {
@@ -11,7 +16,7 @@ const VotersList = ({ getVotingHandler, contractAddress, userAddress }) => {
 
   useEffect(() => {
     getVotersList();
-  }, [getVotingHandler, contractAddress]);
+  }, [getVotingHandler, contractAddress, updateVotersList]);
   return (
     <div className="bg-white mt-10 px-8 py-6 w-full max-w-170 shadow rounded">
       <h3 className="font-semibold text-xl mb-6">Voters addresses:</h3>

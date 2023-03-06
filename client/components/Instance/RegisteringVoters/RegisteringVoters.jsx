@@ -15,6 +15,7 @@ const RegisteringVoters = ({
   updateWorkflowStatus,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshVotersList, setRefreshVotersList] = useState(false);
 
   // Start Proposal Registering
   const startProposalsRegistration = async () => {
@@ -38,6 +39,12 @@ const RegisteringVoters = ({
       console.log(error);
     }
   };
+
+  // Refresh voters addresses when a voter is added
+  const updateVotersList = async () => {
+    setRefreshVotersList(!refreshVotersList);
+  };
+
   return (
     <div className="flex flex-col items-center">
       {/* User role feedback */}
@@ -51,6 +58,7 @@ const RegisteringVoters = ({
           <AddVoter
             getVotingHandler={getVotingHandler}
             contractAddress={contractAddress}
+            updateVotersList={updateVotersList}
           />
           <VoterCanAddProposals
             getVotingHandler={getVotingHandler}
@@ -63,6 +71,7 @@ const RegisteringVoters = ({
         getVotingHandler={getVotingHandler}
         contractAddress={contractAddress}
         userAddress={userAddress}
+        updateVotersList={updateVotersList}
       />
       {/* If the user is an admin, display a button to skip to the next step */}
       {userRole == 0 && (
