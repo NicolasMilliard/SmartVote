@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 import Button from "../../../components/Buttons/Button";
 import ButtonLoader from "../../../components/Buttons/ButtonLoader";
@@ -9,9 +10,37 @@ const ProposalsRegistration = ({
   getVotingHandler,
   contractAddress,
   userRole,
+  userAddress,
   updateWorkflowStatus,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [userCanAddProposal, setUserCanAddProposal] = useState(false);
+  const [refreshProposalsList, setRefreshProposalsList] = useState(false);
+
+  // Check if user can add proposals
+  const checkVotersAllowance = async () => {
+    try {
+      if (!getVotingHandler) return;
+
+      const contract = getVotingHandler(contractAddress);
+      const eventFilter = contract.filters.VotersAuthorizedToAddProposals();
+      const event = await contract.queryFilter(eventFilter, 0);
+
+      setUserCanAddProposal(event[0].args[0]);
+    } catch (error) {
+      toast.error("Please refresh the page", {
+        position: "top-right",
+        autoClose: 5000,
+        closeOnClick: true,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+      });
+    }
+  };
+
+  useEffect(() => {
+    checkVotersAllowance();
+  });
 
   // Start Voting Session
   const startVotingSession = async () => {
@@ -35,13 +64,19 @@ const ProposalsRegistration = ({
     }
   };
 
+  // Refresh proposals list when a proposal is added
+  const updateProposalsList = async () => {
+    setRefreshProposalsList(!refreshProposalsList);
+  };
+
   return (
     <div className="flex flex-col items-center">
-      {/* Display add proposal textarea for voters */}
-      {userRole == 1 && (
+      {/* Displays only for voters */}
+      {(userRole == 0 || userRole == 1) && userCanAddProposal && (
         <AddProposal
           getVotingHandler={getVotingHandler}
           contractAddress={contractAddress}
+          updateProposalsList={updateProposalsList}
         />
       )}
 
@@ -50,6 +85,7 @@ const ProposalsRegistration = ({
         <ProposalsList
           getVotingHandler={getVotingHandler}
           contractAddress={contractAddress}
+          updateProposalsList={updateProposalsList}
         />
       )}
       {/* Admin can skip to the next step */}

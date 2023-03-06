@@ -4,12 +4,9 @@ export const getVoters = async (getVotingHandler, contractAddress) => {
 
     let allEvents = [];
 
-    const eventFilter =
-      getVotingHandler(contractAddress).filters.VoterRegistered();
-    const events = await getVotingHandler(contractAddress).queryFilter(
-      eventFilter,
-      0
-    );
+    const contract = getVotingHandler(contractAddress);
+    const eventFilter = contract.filters.VoterRegistered();
+    const events = await contract.queryFilter(eventFilter, 0);
 
     // Loop through all addresses
     for (let i = 0; i < events.length; i++) {
