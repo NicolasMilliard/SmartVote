@@ -4,7 +4,8 @@ export const registerProposal = async (
   getVotingHandler,
   contractAddress,
   setIsLoading,
-  proposal
+  proposal,
+  updateProposalsList
 ) => {
   try {
     if (!getVotingHandler) return;
@@ -16,6 +17,8 @@ export const registerProposal = async (
     // Wait for the transaction to be mined
     const provider = contract.provider;
     await provider.waitForTransaction(tx.hash);
+
+    updateProposalsList();
 
     toast.success("Proposal has been registered.", {
       position: "top-right",

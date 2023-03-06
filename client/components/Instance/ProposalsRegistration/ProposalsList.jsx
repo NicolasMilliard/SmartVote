@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 
 import { getProposals } from "../../../utils/instance/ProposalsRegistration/getProposals";
 
-const ProposalsList = ({ getVotingHandler, contractAddress }) => {
+const ProposalsList = ({
+  getVotingHandler,
+  contractAddress,
+  updateProposalsList,
+}) => {
   const [proposals, setProposals] = useState([]);
 
   const getProposalsList = async () => {
@@ -11,7 +15,7 @@ const ProposalsList = ({ getVotingHandler, contractAddress }) => {
 
   useEffect(() => {
     getProposalsList();
-  }, [getVotingHandler, contractAddress]);
+  }, [getVotingHandler, contractAddress, updateProposalsList]);
 
   return (
     <div className="bg-white mt-10 px-8 py-6 w-full max-w-170 shadow rounded">

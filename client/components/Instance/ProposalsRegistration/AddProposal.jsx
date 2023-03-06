@@ -6,7 +6,11 @@ import Button from "../../Buttons/Button";
 import ButtonLoader from "../../Buttons/ButtonLoader";
 import ButtonDisabled from "../../Buttons/ButtonDisabled";
 
-const AddProposal = ({ getVotingHandler, contractAddress }) => {
+const AddProposal = ({
+  getVotingHandler,
+  contractAddress,
+  updateProposalsList,
+}) => {
   const [proposalLength, setProposalLength] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -29,7 +33,8 @@ const AddProposal = ({ getVotingHandler, contractAddress }) => {
         getVotingHandler,
         contractAddress,
         setIsLoading,
-        proposal
+        proposal,
+        updateProposalsList
       );
     } else {
       setIsError(true);
