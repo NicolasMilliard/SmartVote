@@ -1,10 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+
 import ProposalsListVote from "./ProposalsListVote";
 import VotersStatus from "./VotersStatus";
 import Button from "../../Buttons/Button";
 import ButtonLoader from "../../Buttons/ButtonLoader";
 
-const VotingSession = ({ getVotingHandler, contractAddress, userRole }) => {
+const VotingSession = ({
+  getVotingHandler,
+  contractAddress,
+  userRole,
+  updateWorkflowStatus,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Tally Votes
@@ -13,8 +19,16 @@ const VotingSession = ({ getVotingHandler, contractAddress, userRole }) => {
       if (!getVotingHandler) return;
       setIsLoading(true);
 
-      const tx = await getVotingHandler(contractAddress).startTallySession();
-      await tx;
+      const contract = await getVotingHandler(contractAddress);
+      const tx = await contract.startTallySession();
+
+      // Wait for the transaction to be mined
+      const provider = contract.provider;
+      await provider.waitForTransaction(tx.hash);
+
+      // Update workflow status
+      updateWorkflowStatus();
+
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);

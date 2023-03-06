@@ -32,7 +32,12 @@ const Instance = () => {
 
   useEffect(() => {
     initInstance();
-  }, [getVotingHandler, instanceId, address]);
+  }, [getVotingHandler, instanceId, address, workflowStatus]);
+
+  // Refresh workflow status
+  const updateWorkflowStatus = async () => {
+    setWorkflowStatus(await getWorkflowStatus(getVotingHandler, instanceId));
+  };
 
   return (
     <InstanceController
@@ -43,6 +48,7 @@ const Instance = () => {
       workflowStatus={workflowStatus}
       userRole={userRole}
       instanceName={instanceName}
+      updateWorkflowStatus={updateWorkflowStatus}
     />
   );
 };

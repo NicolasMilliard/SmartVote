@@ -21,12 +21,15 @@ const InstanceController = ({
   workflowStatus,
   userRole,
   instanceName,
+  updateWorkflowStatus,
 }) => {
   const [deleteInstancePopUp, setDeleteInstancePopUp] = useState(false);
+
   // Toggle pop-up
   const togglePopUp = () => {
     setDeleteInstancePopUp(!deleteInstancePopUp);
   };
+
   return (
     <>
       <Menu isInstance={true} />
@@ -69,6 +72,7 @@ const InstanceController = ({
                     contractAddress={contractAddress}
                     userRole={userRole}
                     userAddress={userAddress}
+                    updateWorkflowStatus={updateWorkflowStatus}
                   />
                 )}
                 {workflowStatus == "Proposals Registration" && (
@@ -76,6 +80,7 @@ const InstanceController = ({
                     getVotingHandler={getVotingHandler}
                     contractAddress={contractAddress}
                     userRole={userRole}
+                    updateWorkflowStatus={updateWorkflowStatus}
                   />
                 )}
                 {workflowStatus == "Voting Session" && (
@@ -83,6 +88,7 @@ const InstanceController = ({
                     getVotingHandler={getVotingHandler}
                     contractAddress={contractAddress}
                     userRole={userRole}
+                    updateWorkflowStatus={updateWorkflowStatus}
                   />
                 )}
                 {workflowStatus == "Votes Tallied" && (

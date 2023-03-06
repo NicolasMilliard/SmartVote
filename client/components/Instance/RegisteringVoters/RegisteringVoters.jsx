@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+
 import Button from "../../../components/Buttons/Button";
 import ButtonLoader from "../../../components/Buttons/ButtonLoader";
 import AddVoter from "./AddVoter";
@@ -11,6 +12,7 @@ const RegisteringVoters = ({
   contractAddress,
   userRole,
   userAddress,
+  updateWorkflowStatus,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,10 +22,16 @@ const RegisteringVoters = ({
       if (!getVotingHandler) return;
       setIsLoading(true);
 
-      const tx = await getVotingHandler(
-        contractAddress
-      ).startProposalsRegistration();
-      await tx;
+      const contract = await getVotingHandler(contractAddress);
+      const tx = await contract.startProposalsRegistration();
+
+      // Wait for the transaction to be mined
+      const provider = contract.provider;
+      await provider.waitForTransaction(tx.hash);
+
+      // Update workflow status
+      updateWorkflowStatus();
+
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
