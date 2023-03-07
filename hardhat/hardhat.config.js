@@ -44,5 +44,15 @@ module.exports = {
       gas: 2100000,
       gasPrice: 8000000000,
     },
+    fuji: {
+      url: process.env.FUJI_ENDPOINT,
+      accounts: {
+        mnemonic: process.env.WALLET_DEV_MNEMONIC,
+        accountsBalance: "1000000000000000000000",
+        count: 10,
+      },
+      gas: 2100000,
+      gasPrice: 225000000000,
+    },
   },
 };
