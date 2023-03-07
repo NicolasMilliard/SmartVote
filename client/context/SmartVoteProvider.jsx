@@ -22,7 +22,7 @@ const loadContract = (address, abi) => {
       console.log("Ethereum object does not exists!");
     }
   } catch (error) {
-    console.log("Contract error:" + error);
+    console.log("Contract error: " + error);
   }
   return contract;
 };
@@ -49,7 +49,7 @@ const SmartVoteProvider = (props) => {
         process.env.INSTANCES_LIST_LOCALHOST,
         instancesListContractArtifact.abi
       );
-    } else {
+    } else if (chain.name === "Polygon Mumbai") {
       // VotingFactory
       votingFactoryContract = loadContract(
         process.env.VOTING_FACTORY_MUMBAI,
@@ -58,6 +58,17 @@ const SmartVoteProvider = (props) => {
       // InstancesList
       instancesListContract = loadContract(
         process.env.INSTANCES_LIST_MUMBAI,
+        instancesListContractArtifact.abi
+      );
+    } else if (chain.name === "Avalanche Fuji") {
+      // VotingFactory
+      votingFactoryContract = loadContract(
+        process.env.VOTING_FACTORY_FUJI,
+        votingFactoryContractArtifact.abi
+      );
+      // InstancesList
+      instancesListContract = loadContract(
+        process.env.INSTANCES_LIST_FUJI,
         instancesListContractArtifact.abi
       );
     }
@@ -77,9 +88,9 @@ const SmartVoteProvider = (props) => {
         },
       });
     } catch (error) {
-      console.log("Could not load the SC.");
+      console.log("Could not load the Smart Contracts.");
     }
-  }, []);
+  }, [chain]);
 
   /*  Call the init callback
       Reload SC if chain has changed
