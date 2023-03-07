@@ -4,11 +4,13 @@ export const votersCanAddProposals = async (
   getVotingHandler,
   contractAddress,
   setAllowed,
-  allowed
+  allowed,
+  setIsLoading
 ) => {
   try {
     if (!getVotingHandler) return;
 
+    setIsLoading(true);
     // Update checked status
     setAllowed(!allowed);
 
@@ -26,6 +28,7 @@ export const votersCanAddProposals = async (
       pauseOnFocusLoss: true,
       pauseOnHover: true,
     });
+    setIsLoading(false);
   } catch (error) {
     // Reset checked status
     setAllowed(allowed);
@@ -36,6 +39,6 @@ export const votersCanAddProposals = async (
       pauseOnFocusLoss: true,
       pauseOnHover: true,
     });
-    console.log(error);
+    setIsLoading(false);
   }
 };
