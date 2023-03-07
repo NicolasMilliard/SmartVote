@@ -26,7 +26,9 @@ const ProposalsRegistration = ({
       const eventFilter = contract.filters.VotersAuthorizedToAddProposals();
       const event = await contract.queryFilter(eventFilter, 0);
 
-      setUserCanAddProposal(event[0].args[0]);
+      if (event.length > 0) {
+        setUserCanAddProposal(event[0].args[0]);
+      }
     } catch (error) {
       toast.error("Please refresh the page", {
         position: "top-right",
@@ -40,7 +42,7 @@ const ProposalsRegistration = ({
 
   useEffect(() => {
     checkVotersAllowance();
-  });
+  }, [userAddress, getVotingHandler, contractAddress, userCanAddProposal]);
 
   // Start Voting Session
   const startVotingSession = async () => {
@@ -71,14 +73,15 @@ const ProposalsRegistration = ({
 
   return (
     <div className="flex flex-col items-center">
-      {/* Displays only for voters */}
-      {(userRole == 0 || userRole == 1) && userCanAddProposal && (
-        <AddProposal
-          getVotingHandler={getVotingHandler}
-          contractAddress={contractAddress}
-          updateProposalsList={updateProposalsList}
-        />
-      )}
+      {/* Displays only for admin and voters who can add proposals */}
+      {userCanAddProposal ||
+        (userRole == 0 && (
+          <AddProposal
+            getVotingHandler={getVotingHandler}
+            contractAddress={contractAddress}
+            updateProposalsList={updateProposalsList}
+          />
+        ))}
 
       {/* Voters and admin can display proposals' list */}
       {(userRole == 0 || userRole == 1) && (
