@@ -72,7 +72,7 @@ const InstanceController = ({
               {/* Form */}
               <div className="flex-col items-center w-full">
                 <InstanceName
-                  instanceName={instanceName}
+                  getVotingHandler={getVotingHandler}
                   contractAddress={contractAddress}
                 />
                 {/* Dashboard sections relative to WorkflowStatus */}
