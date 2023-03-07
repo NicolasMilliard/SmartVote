@@ -1,12 +1,13 @@
 import { useState } from "react";
+
+import InstanceDeleted from "./InstanceDeleted";
 import Menu from "../../Layout/Menu/Menu";
 import Role from "./Role";
-import InstanceDeleted from "./InstanceDeleted";
-import WorkflowStatus from "./WorkflowStatus";
-import InstanceName from "./InstanceName";
-
+import BookmarkInstance from "./BookmarkInstance";
 import ButtonDelete from "../../Buttons/ButtonDelete";
 import VotingSessionDeletePopUp from "../../Dashboard/VotingSessionCards/VotingSessionDeletePopUp";
+import WorkflowStatus from "./WorkflowStatus";
+import InstanceName from "./InstanceName";
 
 import RegisteringVoters from "../RegisteringVoters/RegisteringVoters";
 import ProposalsRegistration from "../ProposalsRegistration/ProposalsRegistration";
@@ -15,6 +16,7 @@ import VotesTallied from "../VotesTallied/VotesTallied";
 
 const InstanceController = ({
   getVotingHandler,
+  instancesList,
   contractAddress,
   userAddress,
   instanceStatus,
@@ -47,10 +49,18 @@ const InstanceController = ({
             )}
             <div className="flex justify-between mb-10">
               <Role role={userRole} />
+              {/* Delete instance button */}
               {userRole == 0 && (
                 <ButtonDelete
                   text="Delete session"
                   customFunction={togglePopUp}
+                />
+              )}
+              {/* Bookmark button for non voter */}
+              {userRole == 2 && (
+                <BookmarkInstance
+                  instancesList={instancesList}
+                  contractAddress={contractAddress}
                 />
               )}
             </div>

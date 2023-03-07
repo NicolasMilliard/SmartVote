@@ -18,7 +18,7 @@ const Instance = () => {
   const [userRole, setUserRole] = useState(2);
   const [instanceName, setInstanceName] = useState("");
   const {
-    state: { getVotingHandler },
+    state: { getVotingHandler, instancesListContract },
   } = useSmartVote();
   const { address } = useAccount();
 
@@ -32,7 +32,13 @@ const Instance = () => {
 
   useEffect(() => {
     initInstance();
-  }, [getVotingHandler, instanceId, address, workflowStatus]);
+  }, [
+    getVotingHandler,
+    instancesListContract,
+    instanceId,
+    address,
+    workflowStatus,
+  ]);
 
   // Refresh workflow status
   const updateWorkflowStatus = async () => {
@@ -42,6 +48,7 @@ const Instance = () => {
   return (
     <InstanceController
       getVotingHandler={getVotingHandler}
+      instancesList={instancesListContract}
       contractAddress={instanceId}
       userAddress={address}
       instanceStatus={instanceStatus}
