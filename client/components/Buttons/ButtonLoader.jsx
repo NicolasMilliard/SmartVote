@@ -1,6 +1,18 @@
 const ButtonLoader = ({ theme }) => {
   const themeButton = (theme) => {
     switch (theme) {
+      case "red":
+        return (
+          <div className="bg-red text-white font-bold py-4 px-6 rounded cursor-not-allowed">
+            <span className="flex items-center">
+              <span
+                className="btn-spin-loader mr-4"
+                style={{ borderTopColor: "#e84949" }}
+              ></span>
+              Loading...
+            </span>
+          </div>
+        );
       case "mini":
         return (
           <div className="cursor-not-allowed">
