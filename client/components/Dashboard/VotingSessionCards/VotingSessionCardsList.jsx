@@ -165,7 +165,7 @@ const VotingSessionCardsList = ({ role, reloadList }) => {
 
   useEffect(() => {
     getInstances();
-  }, [role, votingFactoryContract, checkInstances, reloadList]);
+  }, [role, address, votingFactoryContract, checkInstances, reloadList]);
 
   return (
     <>

@@ -89,6 +89,7 @@ const InstanceController = ({
                     getVotingHandler={getVotingHandler}
                     contractAddress={contractAddress}
                     userRole={userRole}
+                    userAddress={userAddress}
                     updateWorkflowStatus={updateWorkflowStatus}
                   />
                 )}
