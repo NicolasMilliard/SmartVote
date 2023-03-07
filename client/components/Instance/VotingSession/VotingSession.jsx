@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { isVoterHasVoted } from "../../../utils/instance/VotingSession/isVoterhasVoted";
 
 import ProposalsListVote from "./ProposalsListVote";
 import VotersStatus from "./VotersStatus";
@@ -9,9 +11,11 @@ const VotingSession = ({
   getVotingHandler,
   contractAddress,
   userRole,
+  userAddress,
   updateWorkflowStatus,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [hasVoted, setHasVoted] = useState(true);
 
   // Tally Votes
   const tallyVotes = async () => {
@@ -36,15 +40,28 @@ const VotingSession = ({
     }
   };
 
+  // Check if user has voted
+  const handleVotedStatus = async () => {
+    setHasVoted(
+      await isVoterHasVoted(getVotingHandler, contractAddress, userAddress)
+    );
+  };
+
+  useEffect(() => {
+    handleVotedStatus();
+  }, [getVotingHandler, contractAddress, userAddress]);
+
   return (
     <div className="flex flex-col items-center">
       {/* Display proposals list and vote button for the voters */}
-      {userRole == 1 && (
+      {(userRole == 0 || userRole == 1) && !hasVoted && (
         <ProposalsListVote
           getVotingHandler={getVotingHandler}
           contractAddress={contractAddress}
+          handleVotedStatus={handleVotedStatus}
         />
       )}
+      {hasVoted && <p>You have already voted.</p>}
       {/* Display the voters' list for the admin */}
       {userRole == 0 && (
         <>

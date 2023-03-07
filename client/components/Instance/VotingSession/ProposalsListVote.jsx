@@ -4,7 +4,11 @@ import ButtonLoader from "../../Buttons/ButtonLoader";
 
 import { vote } from "../../../utils/instance/VotingSession/Vote";
 
-const ProposalsListVote = ({ getVotingHandler, contractAddress }) => {
+const ProposalsListVote = ({
+  getVotingHandler,
+  contractAddress,
+  handleVotedStatus,
+}) => {
   const [proposals, setProposals] = useState([]);
   const [checkedProposal, setCheckedProposal] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +47,13 @@ const ProposalsListVote = ({ getVotingHandler, contractAddress }) => {
 
   // Vote for the selected proposal
   const handleVote = async () => {
-    vote(getVotingHandler, contractAddress, checkedProposal, setIsLoading);
+    vote(
+      getVotingHandler,
+      contractAddress,
+      checkedProposal,
+      setIsLoading,
+      handleVotedStatus
+    );
   };
 
   return (

@@ -4,7 +4,8 @@ export const vote = async (
   getVotingHandler,
   contractAddress,
   proposalId,
-  setIsLoading
+  setIsLoading,
+  handleVotedStatus
 ) => {
   if (proposalId != null) {
     try {
@@ -17,6 +18,9 @@ export const vote = async (
       // Wait for the transaction to be mined
       const provider = contract.provider;
       await provider.waitForTransaction(tx.hash);
+
+      // Update voter status (hasVoted)
+      handleVotedStatus();
 
       toast.success("Your vote has been recorded.", {
         position: "top-right",
