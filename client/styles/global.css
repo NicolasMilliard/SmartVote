@@ -8,15 +8,6 @@ body {
   background-color: #e1e1e5;
 }
 
-html::-webkit-scrollbar {
-  display: none;
-}
-
-html {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
 /* Button loader */
 .btn-spin-loader {
   display: inline-block;
