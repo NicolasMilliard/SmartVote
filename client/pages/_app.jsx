@@ -4,7 +4,7 @@ import {
   lightTheme,
 } from "@rainbow-me/rainbowkit";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { localhost, polygonMumbai } from "wagmi/chains";
+import { localhost, polygonMumbai, avalancheFuji } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import { ToastContainer } from "react-toastify";
 
@@ -16,7 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "../styles/global.css";
 
 const { chains, provider } = configureChains(
-  [localhost, polygonMumbai],
+  [localhost, polygonMumbai, avalancheFuji],
   [publicProvider()]
 );
 
