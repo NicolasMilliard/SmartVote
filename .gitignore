@@ -13,7 +13,6 @@ hardhat/coverage.json
 client/build
 
 # Contract's artifacts
-client/artifacts
 hardhat/.openzeppelin
 
 # Cache
