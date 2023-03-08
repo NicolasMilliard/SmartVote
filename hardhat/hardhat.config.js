@@ -4,6 +4,7 @@ require("@nomicfoundation/hardhat-chai-matchers");
 require("@openzeppelin/hardhat-upgrades");
 require("solidity-coverage");
 require("hardhat-gas-reporter");
+require("@nomiclabs/hardhat-etherscan");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -53,6 +54,12 @@ module.exports = {
       },
       gas: 2100000,
       gasPrice: 225000000000,
+    },
+  },
+  etherscan: {
+    apiKey: {
+      polygonMumbai: process.env.POLYGONSCAN_KEY,
+      avalancheFujiTestnet: process.env.SNOWTRACE_KEY,
     },
   },
 };
