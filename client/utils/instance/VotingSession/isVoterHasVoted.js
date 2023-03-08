@@ -10,7 +10,7 @@ export const isVoterHasVoted = async (
     const eventFilter = contract.filters.Voted(userAddress);
     const event = await contract.queryFilter(eventFilter, 0);
 
-    // User has already voted
+    // If a user has already voted
     if (event.length > 0) {
       return true;
     } else {
