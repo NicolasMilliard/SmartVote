@@ -40,7 +40,7 @@ const VotingSession = ({
     }
   };
 
-  // Check if user has voted
+  // Check if a user has voted
   const handleVotedStatus = async () => {
     setHasVoted(
       await isVoterHasVoted(getVotingHandler, contractAddress, userAddress)
