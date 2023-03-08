@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { getInstanceName } from "../../../utils/instance/getInstanceName";
 import { setInstanceName } from "../../../utils/instance/setInstanceName";
 
-const InstanceName = ({ getVotingHandler, contractAddress }) => {
+const InstanceName = ({ getVotingHandler, contractAddress, userRole }) => {
   const [currentName, setCurrentName] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -52,7 +52,7 @@ const InstanceName = ({ getVotingHandler, contractAddress }) => {
 
   return (
     <div className="flex justify-center">
-      {isEditing ? (
+      {isEditing && userRole == 0 ? (
         <input
           ref={inputRef}
           type="text"

@@ -74,6 +74,7 @@ const InstanceController = ({
                 <InstanceName
                   getVotingHandler={getVotingHandler}
                   contractAddress={contractAddress}
+                  userRole={userRole}
                 />
                 {/* Dashboard sections relative to WorkflowStatus */}
                 {workflowStatus == "Registering Voters" && (
