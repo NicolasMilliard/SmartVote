@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { isVoterHasVoted } from "../../../utils/instance/VotingSession/isVoterhasVoted";
+import { getHasVotedStatus } from "../../../utils/instance/VotingSession/getHasVotedStatus";
 
 import ProposalsListVote from "./ProposalsListVote";
 import VotersStatus from "./VotersStatus";
@@ -43,7 +43,7 @@ const VotingSession = ({
   // Check if a user has voted
   const handleVotedStatus = async () => {
     setHasVoted(
-      await isVoterHasVoted(getVotingHandler, contractAddress, userAddress)
+      await getHasVotedStatus(getVotingHandler, contractAddress, userAddress)
     );
   };
 

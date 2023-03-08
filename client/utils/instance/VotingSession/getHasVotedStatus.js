@@ -1,4 +1,4 @@
-export const isVoterHasVoted = async (
+export const getHasVotedStatus = async (
   getVotingHandler,
   contractAddress,
   userAddress
