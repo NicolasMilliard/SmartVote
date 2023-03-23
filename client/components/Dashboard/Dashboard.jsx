@@ -78,14 +78,7 @@ const Dashboard = () => {
               </button>
             ))}
           </div>
-          {isLoading ? (
-            <ButtonLoader />
-          ) : (
-            <Button
-              text="Create a new Voting Session"
-              customFunction={createInstance}
-            />
-          )}
+          {isLoading ? <ButtonLoader /> : <Button text="Create a new Voting Session" customFunction={createInstance} />}
         </nav>
         <VotingSessionCardsList role={currentRole} reloadList={isUpdated} />
       </section>
