@@ -126,7 +126,7 @@ npm run dev
 
 SmartVote is divided into 3 Smart Contracts:
 
-- VotingFactory.sol: allows to create voting instances respecting the EIP-1167. Althoug adding an additional cost of 700 gas per transaction, EIP-1167 allows a simplification of the VotingFactory contract and a very large reduction of the deployment costs;
+- VotingFactory.sol: allows to create voting instances respecting the EIP-1167. Although adding an additional cost of 700 gas per transaction, EIP-1167 allows a simplification of the VotingFactory contract and a very large reduction of the deployment costs;
 - VotingHandler.sol: serves as a reference to the Clones created by VotingFactory. This Smart Contract contains all the logic of the voting sessions: adding voters, adding proposals, counting votes, second round... This Smart Contract is Upgradeable to allow cloning and registration of a new contract owner. Moreover, VotingHandler is Pausable in order to propose to the users of the dApp a "removing" of a voting instance (classical removing is impossible on the Blockchain);
 - InstancesList.sol: this Smart Contract acts as a bookmark and allows "Non Voters" to follow or stop following a voting instance from their dashboard.
 
