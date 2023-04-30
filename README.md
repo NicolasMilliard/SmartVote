@@ -1,7 +1,5 @@
 # SmartVote: organize voting sessions on the blockchain
 
-This project is still under development. <br><br>
-
 ## Table of Contents
 
 1. [Project Description](#project-description)
