@@ -128,4 +128,4 @@ SmartVote is divided into 3 Smart Contracts:
 - VotingHandler.sol: serves as a reference to the Clones created by VotingFactory. This Smart Contract contains all the logic of the voting sessions: adding voters, adding proposals, counting votes, second round... This Smart Contract is Upgradeable to allow cloning and registration of a new contract owner. Moreover, VotingHandler is Pausable in order to propose to the users of the dApp a "removing" of a voting instance (classical removing is impossible on the Blockchain);
 - InstancesList.sol: this Smart Contract acts as a bookmark and allows "Non Voters" to follow or stop following a voting instance from their dashboard.
 
-![Minimal Proxy Contract](https://nicolasmilliard.fr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fsmart-vote-eip-1167.acade96c.png&w=1080&q=75)
+![Minimal Proxy Contract](https://nicolasmilliard.fr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fsmart-vote-eip-1167.69a0a99f.png&w=1920&q=75)
